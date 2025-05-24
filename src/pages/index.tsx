@@ -1,114 +1,123 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import Head from "next/head";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const sentence =
+  "당신의 성향은 바람처럼 흐르고, 타로는 그 바람을 따라 오는 작은 이야기입니다.";
 
 export default function Home() {
   return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <>
+      <Head>
+        <title>MBTI x Tarot | 조용한 시작</title>
+        <meta
+          name="description"
+          content="성향과 카드가 만나는 감정의 바람 속에서, 당신만의 조언이 들려옵니다."
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      </Head>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <main className="min-h-screen bg-[#f8f6f2] text-[#4e4a45] px-6 py-12 flex flex-col items-center justify-center text-center relative overflow-hidden font-serif">
+        {/* 1. 부드럽게 흐르는 배경 이미지 */}
+        <motion.div
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-10 pointer-events-none"
+          style={{ backgroundImage: "url('/assets/images/background.png')" }}
+          animate={{
+            scale: [1, 1.02, 1],
+            opacity: [0.1, 0.12, 0.1],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* 2. 나뭇잎 실루엣 흔들림 (leaf-shadow.svg 필요) */}
+        <motion.div
+          className="absolute inset-0 bg-[url('/assets/images/leaf-shadow.svg')] bg-no-repeat bg-center bg-contain opacity-10 pointer-events-none z-0"
+          animate={{
+            x: [-1, 1, 0],
+            y: [0, 1, -1],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        <div className="relative z-10 max-w-xl space-y-8">
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="text-4xl md:text-5xl font-semibold tracking-wide"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            조용한 감정의 지도
+          </motion.h1>
+
+          {/* 3. 한 글자씩 조용히 나타나는 문장 */}
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  delayChildren: 0.5,
+                  staggerChildren: 0.05,
+                },
+              },
+            }}
+            className="text-lg md:text-xl text-[#6e6861] leading-relaxed flex flex-wrap justify-center"
           >
-            Read our docs
-          </a>
+            {sentence.split("").map((char, index) => (
+              <motion.span
+                key={index}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: { opacity: 1 },
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </motion.p>
+
+          <motion.div
+            whileHover={{ scale: 1.03, y: -2 }}
+            transition={{ type: "spring", stiffness: 200 }}
+          >
+            <Link href="/test">
+              <Button
+                variant="outline"
+                className="bg-transparent border-[#c2b9a8] text-[#4e4a45] hover:bg-[#ede9e2] transition rounded-lg px-6 py-3 text-base shadow-none"
+                aria-label="조용히 시작하기"
+              >
+                조용히 시작하기
+              </Button>
+            </Link>
+          </motion.div>
+
+          <motion.ul
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="mt-12 space-y-3 text-left text-lg text-[#5f564f]"
+          >
+            <li>🌱 성향을 알아봅니다</li>
+            <li>🌫 마음속 질문을 정합니다</li>
+            <li>🌙 카드 한 장을 뽑습니다</li>
+            <li>📜 감정에 맞는 말 한 줄을 받습니다</li>
+          </motion.ul>
+
+          <footer className="pt-12 text-sm text-[#a1988a]">
+            2025 © TarotCat | Created like wind and time
+          </footer>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    </>
   );
 }
