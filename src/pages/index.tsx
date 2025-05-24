@@ -1,64 +1,56 @@
 import Head from "next/head";
 import Link from "next/link";
+import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 
-const sentence =
-  "당신의 성향은 바람처럼 흐르고, 타로는 그 바람을 따라 오는 작은 이야기입니다.";
+const sentences = [
+  "마음이 머무는 새벽의 숲에서,",
+  "당신에게만 속삭이는 조언을 전합니다.",
+];
+
+const steps = [
+  { icon: "📝", label: "1. MBTI 테스트", aria: "MBTI 테스트" },
+  { icon: "❓", label: "2. 질문 선택", aria: "질문 선택" },
+  { icon: "🔮", label: "3. 타로 카드 뽑기", aria: "타로 카드 뽑기" },
+  { icon: "💌", label: "4. 맞춤형 조언 받기", aria: "맞춤형 조언 받기" },
+];
 
 export default function Home() {
   return (
     <>
       <Head>
-        <title>MBTI x Tarot | 조용한 시작</title>
+        <title>MBTI x Tarot | 성향 기반 타로 조언</title>
         <meta
           name="description"
-          content="성향과 카드가 만나는 감정의 바람 속에서, 당신만의 조언이 들려옵니다."
+          content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다."
         />
+        <meta
+          property="og:title"
+          content="MBTI x Tarot | 성향 기반 타로 조언"
+        />
+        <meta
+          property="og:description"
+          content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://your-tarot-mbti.com/" />
+        <meta property="og:image" content="/og-image.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
-      <main className="min-h-screen bg-[#f8f6f2] text-[#4e4a45] px-6 py-12 flex flex-col items-center justify-center text-center relative overflow-hidden font-serif">
-        {/* 1. 부드럽게 흐르는 배경 이미지 */}
-        <motion.div
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-10 pointer-events-none"
-          style={{ backgroundImage: "url('/assets/images/background.png')" }}
-          animate={{
-            scale: [1, 1.02, 1],
-            opacity: [0.1, 0.12, 0.1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        {/* 2. 나뭇잎 실루엣 흔들림 (leaf-shadow.svg 필요) */}
-        <motion.div
-          className="absolute inset-0 bg-[url('/assets/images/leaf-shadow.svg')] bg-no-repeat bg-center bg-contain opacity-10 pointer-events-none z-0"
-          animate={{
-            x: [-1, 1, 0],
-            y: [0, 1, -1],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-
-        <div className="relative z-10 max-w-xl space-y-8">
+      <Layout>
+        <section className="flex flex-col items-center justify-center flex-1 py-20 px-4 text-center">
+          {/* 타이틀 */}
           <motion.h1
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="text-4xl md:text-5xl font-semibold tracking-wide"
+            transition={{ duration: 1.2, delay: 0.3 }}
+            className="text-4xl md:text-5xl font-bold mb-6 text-[#f7f5f0] drop-shadow-[0_2px_8px_rgba(30,30,30,0.18)]"
           >
-            조용한 감정의 지도
+            조용한 흐름의 시작
           </motion.h1>
-
-          {/* 3. 한 글자씩 조용히 나타나는 문장 */}
-          <motion.p
+          {/* 설명 문장 */}
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={{
@@ -66,58 +58,71 @@ export default function Home() {
               visible: {
                 opacity: 1,
                 transition: {
-                  delayChildren: 0.5,
-                  staggerChildren: 0.05,
+                  delayChildren: 1.0,
+                  staggerChildren: 0.045,
                 },
               },
             }}
-            className="text-lg md:text-xl text-[#6e6861] leading-relaxed flex flex-wrap justify-center"
+            className="flex flex-wrap justify-center text-lg md:text-xl text-[#e6e1d6] mb-10 font-normal text-center"
+            aria-label={sentences.join(" ")}
           >
-            {sentence.split("").map((char, index) => (
-              <motion.span
-                key={index}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: { opacity: 1 },
-                }}
-              >
-                {char}
-              </motion.span>
+            {sentences.map((line, idx) => (
+              <motion.p key={idx} className="mb-2">
+                {line.split("").map((char, i) => (
+                  <motion.span
+                    key={i}
+                    variants={{
+                      hidden: { opacity: 0, filter: "blur(2px)" },
+                      visible: { opacity: 1, filter: "blur(0px)" },
+                    }}
+                    transition={{ duration: 0.3 }}
+                    style={{ display: "inline-block" }}
+                  >
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+              </motion.p>
             ))}
-          </motion.p>
-
-          <motion.div
-            whileHover={{ scale: 1.03, y: -2 }}
-            transition={{ type: "spring", stiffness: 200 }}
-          >
-            <Link href="/test">
-              <Button
-                variant="outline"
-                className="bg-transparent border-[#c2b9a8] text-[#4e4a45] hover:bg-[#ede9e2] transition rounded-lg px-6 py-3 text-base shadow-none"
-                aria-label="조용히 시작하기"
-              >
-                조용히 시작하기
-              </Button>
-            </Link>
           </motion.div>
 
-          <motion.ul
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-12 space-y-3 text-left text-lg text-[#5f564f]"
+          {/* 버튼 */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.2, duration: 0.8 }}
           >
-            <li>🌱 성향을 알아봅니다</li>
-            <li>🌫 마음속 질문을 정합니다</li>
-            <li>🌙 카드 한 장을 뽑습니다</li>
-            <li>📜 감정에 맞는 말 한 줄을 받습니다</li>
-          </motion.ul>
-
-          <footer className="pt-12 text-sm text-[#a1988a]">
-            2025 © TarotCat | Created like wind and time
-          </footer>
-        </div>
-      </main>
+            <Link
+              href="/test"
+              className="rounded-xl shadow-md bg-white/80 hover:bg-muted transition font-semibold px-8 py-3 text-lg text-gray-700 inline-block text-center"
+              aria-label="질문에 답하고, 당신만의 조언을 들어보세요"
+            >
+              질문에 답하고, <br className="md:hidden" />
+              당신만의 조언을 들어보세요
+            </Link>
+          </motion.div>
+          {/* 4단계 리스트 */}
+          <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-14 text-[#e6e1d6]">
+            {steps.map((step, idx) => (
+              <motion.li
+                key={step.label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.6 + idx * 0.3, duration: 0.7 }}
+                className="flex flex-col items-center"
+              >
+                <span
+                  className="mb-2 text-3xl"
+                  role="img"
+                  aria-label={step.aria}
+                >
+                  {step.icon}
+                </span>
+                <span>{step.label}</span>
+              </motion.li>
+            ))}
+          </ol>
+        </section>
+      </Layout>
     </>
   );
 }
