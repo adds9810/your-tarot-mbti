@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 const sentences = [
   "마음이 머무는 새벽의 숲에서,",
@@ -16,6 +17,10 @@ const steps = [
 ];
 
 export default function Home() {
+  useEffect(() => {
+    localStorage.removeItem("tarot_result");
+  }, []);
+
   return (
     <>
       <Head>
@@ -63,7 +68,7 @@ export default function Home() {
                 },
               },
             }}
-            className="flex flex-wrap justify-center text-lg md:text-xl text-[#e6e1d6] mb-10 font-normal text-center"
+            className="flex flex-wrap gap-1 justify-center text-lg md:text-xl text-[#e6e1d6] mb-10 font-normal text-center"
             aria-label={sentences.join(" ")}
           >
             {sentences.map((line, idx) => (
