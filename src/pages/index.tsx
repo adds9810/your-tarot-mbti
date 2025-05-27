@@ -18,7 +18,7 @@ const steps = [
 
 export default function Home() {
   useEffect(() => {
-    localStorage.removeItem("tarot_result");
+    localStorage.removeItem("tarot_session");
   }, []);
 
   return (
@@ -44,7 +44,7 @@ export default function Home() {
       </Head>
 
       <Layout>
-        <section className="flex flex-col items-center justify-center flex-1 py-20 px-4 text-center">
+        <section className="flex flex-col items-center justify-center flex-1 py-2 md:py-20 px-4 text-center">
           {/* 타이틀 */}
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
@@ -106,7 +106,7 @@ export default function Home() {
             </Link>
           </motion.div>
           {/* 4단계 리스트 */}
-          <ol className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-14 text-[#e6e1d6]">
+          <ol className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-14 text-[#e6e1d6]">
             {steps.map((step, idx) => (
               <motion.li
                 key={step.label}

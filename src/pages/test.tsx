@@ -32,22 +32,51 @@ export default function TestPage() {
     if (step < questions.length - 1) {
       setStep((s) => s + 1);
     } else {
-      // 테스트 결과 저장
-      const total = updatedAnswers.reduce((a, b) => a + b, 0);
-      const inferredType = total >= 4 ? "감성형 (F타입)" : "직관형 (N타입)"; // 임시 분류
+      // MBTI 4축 계산
+      const axes = {
+        EI: 0, // +면 I, -면 E
+        NS: 0, // +면 N, -면 S
+        FT: 0, // +면 F, -면 T
+        PJ: 0, // +면 P, -면 J
+      };
+
+      // 각 질문별로 MBTI 축 연결
+      updatedAnswers.forEach((ans, idx) => {
+        switch (idx) {
+          case 0:
+          case 3:
+            axes.EI += ans ? 1 : -1;
+            break;
+          case 1:
+          case 4:
+            axes.NS += ans ? 1 : -1;
+            break;
+          case 2:
+            axes.PJ += ans ? 1 : -1;
+            break;
+          case 5:
+            axes.FT += ans ? 1 : -1;
+            break;
+        }
+      });
+
+      const mbti =
+        (axes.EI >= 0 ? "I" : "E") +
+        (axes.NS >= 0 ? "N" : "S") +
+        (axes.FT >= 0 ? "F" : "T") +
+        (axes.PJ >= 0 ? "P" : "J");
 
       localStorage.setItem(
-        "tarot_result",
+        "tarot_session",
         JSON.stringify({
           answers: updatedAnswers,
-          inferredType,
+          mbti,
           createdAt: new Date().toISOString(),
         })
       );
 
-      setTimeout(() => {
-        router.push("/test/draw"); // 결과 페이지 대신 draw로 이동
-      }, 400);
+      console.log("MBTI 결과:", mbti);
+      router.push("/draw");
     }
   };
 
@@ -71,15 +100,21 @@ export default function TestPage() {
       </Head>
 
       <Layout>
-        <main className="flex flex-col items-center justify-center min-h-[70vh] py-10 px-4">
+        <section
+          aria-labelledby="test-heading"
+          className="flex flex-col items-center justify-center min-h-[70vh] py-10 px-4"
+        >
           {!started ? (
-            <motion.section
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
               className="text-center max-w-xl bg-[#1a2320]/80 rounded-2xl shadow-lg px-6 py-14"
             >
-              <h1 className="text-3xl md:text-4xl font-semibold text-[#f7f5f0] mb-6 font-serif">
+              <h1
+                id="test-heading"
+                className="text-3xl md:text-4xl font-semibold text-[#f7f5f0] mb-6 font-serif"
+              >
                 조용한 새벽의 시작
               </h1>
               <p className="text-lg md:text-xl text-[#e6e1d6] font-serif leading-relaxed mb-4">
@@ -98,11 +133,11 @@ export default function TestPage() {
               >
                 조용히 시작하기
               </Button>
-            </motion.section>
+            </motion.div>
           ) : (
             <section
+              aria-labelledby="question-heading"
               className="w-full max-w-xl mx-auto flex flex-col items-center justify-center bg-[#1a2320]/80 rounded-2xl shadow-lg p-6 md:p-10"
-              aria-label="성향 테스트 질문"
             >
               <AnimatePresence mode="wait">
                 <motion.article
@@ -114,17 +149,21 @@ export default function TestPage() {
                   className="w-full"
                   aria-live="polite"
                 >
-                  <div className="mb-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-[#f7f5f0] font-serif text-center mb-4">
+                  <div className="mb-8 text-center">
+                    <h2
+                      id="question-heading"
+                      className="text-2xl md:text-3xl font-bold text-[#f7f5f0] font-serif mb-4"
+                    >
                       {step + 1} / {questions.length}
                     </h2>
                     <p
-                      className="text-lg md:text-xl text-[#e6e1d6] font-serif text-center"
+                      className="text-lg md:text-xl text-[#e6e1d6] font-serif"
                       aria-label={`질문 ${step + 1}: ${questions[step]}`}
                     >
                       {questions[step]}
                     </p>
                   </div>
+
                   <div
                     className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-4"
                     role="radiogroup"
@@ -148,7 +187,7 @@ export default function TestPage() {
               </AnimatePresence>
             </section>
           )}
-        </main>
+        </section>
       </Layout>
     </>
   );
