@@ -1,8 +1,10 @@
 import "@/styles/globals.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
+import LoadingOverlay from "@/components/LoadingOverlay";
+
 // 반딧불 particle 컴포넌트
 function Fireflies({ count = 24 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -72,8 +74,10 @@ function Fireflies({ count = 24 }) {
   );
 }
 export default function App({ Component, pageProps }: AppProps) {
+  const [isRouteChanging, setIsRouteChanging] = useState(false);
   const router = useRouter();
   const path = router.pathname;
+
   const backgroundImage =
     path === "/"
       ? "intro-background.png"
@@ -96,6 +100,21 @@ export default function App({ Component, pageProps }: AppProps) {
     window.scrollTo(0, 0);
   }, [router.pathname]);
 
+  useEffect(() => {
+    const handleStart = () => setIsRouteChanging(true);
+    const handleComplete = () => setIsRouteChanging(false);
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+    };
+  }, [router]);
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -105,11 +124,14 @@ export default function App({ Component, pageProps }: AppProps) {
         exit={{ opacity: 0 }}
         transition={{ duration: 1, ease: "easeInOut" }}
         className="flex flex-col justify-between min-h-screen bg-[#1a2320] overflow-hidden"
-        style={{
-          background: `url('/assets/images/${backgroundImage}') center/cover no-repeat`,
-          filter: "blur(0.5px) brightness(0.85)",
-        }}
       >
+        <motion.div
+          className="fixed top-0 left-0 w-full h-screen"
+          style={{
+            background: `url('/assets/images/${backgroundImage}') center/cover no-repeat`,
+            filter: "blur(0.5px) brightness(0.85)",
+          }}
+        />
         <motion.div
           aria-hidden
           className="fixed inset-0 w-full h-full z-0"
@@ -123,6 +145,7 @@ export default function App({ Component, pageProps }: AppProps) {
           {/* 반딧불 */}
           <Fireflies count={FirefliesCount} />
         </motion.div>
+        {isRouteChanging && <LoadingOverlay />}
         <Component {...pageProps} />
       </motion.div>
     </AnimatePresence>

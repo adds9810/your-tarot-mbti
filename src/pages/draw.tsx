@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { tarotCards, TarotCard } from "@/constants/tarotCards";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function DrawPage() {
   const [step, setStep] = useState<0 | 1 | 2>(0);
@@ -15,6 +16,7 @@ export default function DrawPage() {
   const [customQuestion, setCustomQuestion] = useState("");
   const [shuffled, setShuffled] = useState<TarotCard[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const SHUFFLE_DISPLAY_COUNT = 4;
 
@@ -36,11 +38,39 @@ export default function DrawPage() {
   };
 
   // 카드 선택 완료
-  const handleCardSelect = (card: TarotCard) => {
+  const handleCardSelect = async (card: TarotCard) => {
+    setLoading(true);
     const question = questionType === "today" ? "오늘의 운세" : customQuestion;
-    localStorage.setItem("tarot_question", question);
-    localStorage.setItem("selected_card", JSON.stringify(card));
-    router.push("/result");
+
+    const session = localStorage.getItem("tarot_session");
+    const mbti = session ? JSON.parse(session).mbti : "INFP";
+
+    try {
+      const res = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, card, mbti }),
+      });
+
+      const data = await res.json();
+
+      localStorage.setItem(
+        "tarot_result",
+        JSON.stringify({
+          card,
+          question,
+          mbti,
+          interpretation: data.output,
+          createdAt: new Date().toISOString(),
+        })
+      );
+
+      setLoading(false);
+      router.push("/result");
+    } catch (error) {
+      console.error("Gemini 호출 실패:", error);
+      alert("결과를 불러오는 데 문제가 발생했어요.");
+    }
   };
 
   return (
@@ -194,57 +224,61 @@ export default function DrawPage() {
               )}
 
               {/* 3단계: 카드 선택 */}
-              {step === 2 && (
-                <motion.section
-                  key="pick"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -30 }}
-                  transition={{ duration: 0.7, ease: "easeInOut" }}
-                  aria-labelledby="pick-heading"
-                  className="w-full flex flex-col items-center"
-                >
-                  <h2
-                    id="pick-heading"
-                    className="text-2xl md:text-3xl font-bold text-[#f7f5f0] font-serif text-center mb-4 md:mb-8"
+              {step === 2 &&
+                (loading ? (
+                  <LoadingOverlay />
+                ) : (
+                  <motion.section
+                    key="pick"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
+                    transition={{ duration: 0.7, ease: "easeInOut" }}
+                    aria-labelledby="pick-heading"
+                    className="w-full flex flex-col items-center"
                   >
-                    한 장의 카드를 선택해 주세요
-                  </h2>
+                    <h2
+                      id="pick-heading"
+                      className="text-2xl md:text-3xl font-bold text-[#f7f5f0] font-serif text-center mb-4 md:mb-8"
+                    >
+                      한 장의 카드를 선택해 주세요
+                    </h2>
 
-                  <div
-                    className="w-full flex flex-wrap justify-center items-center gap-y-2"
-                    role="list"
-                    aria-label="카드 목록"
-                  >
-                    {shuffled.slice(0, 22).map((card, idx) => (
-                      <motion.button
-                        key={card.id}
-                        role="listitem"
-                        aria-label={`카드 ${idx + 1} 선택`}
-                        className={`relative w-14 -ml-8 translate-x-1/4 md:-ml-12 md:w-24 bg-[#e6e1d6] rounded-lg shadow-md border border-[#bcb8b1] flex items-center justify-center transition-transform duration-200 hover:z-10 focus-visible:ring-2 ring-[#bcb8b1] ${
-                          selected === card.id
-                            ? "ring-4 ring-[#fffbe6] scale-105"
-                            : "hover:scale-105"
-                        }`}
-                        onClick={() => {
-                          setSelected(card.id);
-                          setTimeout(() => handleCardSelect(card), 600);
-                        }}
-                        tabIndex={0}
-                        whileTap={{ scale: 0.97 }}
-                        style={{ outline: "none" }}
-                      >
-                        <img
-                          src="/assets/images/cards/back.png" // 카드 뒷면 이미지
-                          alt="타로 카드 뒷면"
-                          className="w-full h-full object-contain select-none pointer-events-none"
-                          draggable={false}
-                        />
-                      </motion.button>
-                    ))}
-                  </div>
-                </motion.section>
-              )}
+                    <div
+                      className="w-full flex flex-wrap justify-center items-center gap-y-2"
+                      role="list"
+                      aria-label="카드 목록"
+                    >
+                      {shuffled.slice(0, 22).map((card, idx) => (
+                        <motion.button
+                          key={card.id}
+                          role="listitem"
+                          aria-label={`카드 ${idx + 1} 선택`}
+                          className={`relative w-14 -ml-8 translate-x-1/4 md:-ml-12 md:w-24 bg-[#e6e1d6] rounded-lg shadow-md border border-[#bcb8b1] flex items-center justify-center transition-transform duration-200 hover:z-10 focus-visible:ring-2 ring-[#bcb8b1] ${
+                            selected === card.id
+                              ? "ring-4 ring-[#fffbe6] scale-105"
+                              : "hover:scale-105"
+                          }`}
+                          onClick={() => {
+                            setSelected(card.id);
+                            setLoading(true); // 로딩 true 먼저 설정!
+                            setTimeout(() => handleCardSelect(card), 600);
+                          }}
+                          tabIndex={0}
+                          whileTap={{ scale: 0.97 }}
+                          style={{ outline: "none" }}
+                        >
+                          <img
+                            src="/assets/images/cards/back.png"
+                            alt="타로 카드 뒷면"
+                            className="w-full h-full object-contain select-none pointer-events-none"
+                            draggable={false}
+                          />
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.section>
+                ))}
             </AnimatePresence>
           </div>
         </section>
