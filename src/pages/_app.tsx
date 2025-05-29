@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import LoadingOverlay from "@/components/LoadingOverlay";
+// import LoadingOverlay from "@/components/LoadingOverlay";
 
 // 반딧불 particle 컴포넌트
 function Fireflies({ count = 24 }) {
@@ -22,7 +22,6 @@ function Fireflies({ count = 24 }) {
     canvas.style.height = height + "px";
     ctx?.scale(dpr, dpr);
 
-    // 반딧불 파티클 초기화 (최적화 버전)
     const particles = Array.from({ length: count }).map(() => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -60,6 +59,7 @@ function Fireflies({ count = 24 }) {
 
       animationId = requestAnimationFrame(animate);
     }
+
     animate();
     return () => cancelAnimationFrame(animationId);
   }, [count]);
@@ -73,19 +73,57 @@ function Fireflies({ count = 24 }) {
     />
   );
 }
+
 export default function App({ Component, pageProps }: AppProps) {
-  const [isRouteChanging, setIsRouteChanging] = useState(false);
+  // const [isRouteChanging, setIsRouteChanging] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState(
+    "result-background.png"
+  );
   const router = useRouter();
   const path = router.pathname;
 
-  const backgroundImage =
-    path === "/"
-      ? "intro-background.png"
-      : path.includes("/test")
-      ? "test-background.png"
-      : path.includes("/draw")
-      ? "draw-background.png"
-      : "result-background.png";
+  useEffect(() => {
+    // 페이지 이동 시마다 스크롤 최상단으로
+    window.scrollTo(0, 0);
+  }, [router.pathname]);
+
+  // useEffect(() => {
+  //   const handleStart = () => setIsRouteChanging(true);
+  //   const handleComplete = () => setIsRouteChanging(false);
+
+  //   router.events.on("routeChangeStart", handleStart);
+  //   router.events.on("routeChangeComplete", handleComplete);
+  //   router.events.on("routeChangeError", handleComplete);
+
+  //   return () => {
+  //     router.events.off("routeChangeStart", handleStart);
+  //     router.events.off("routeChangeComplete", handleComplete);
+  //     router.events.off("routeChangeError", handleComplete);
+  //   };
+  // }, [router]);
+
+  // 클라이언트 사이드에서 mbti → backgroundImage 설정
+  useEffect(() => {
+    let image = "result-background.png";
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("tarot_result");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          const mbti = parsed.mbti?.toLowerCase();
+          if (path === "/") image = "intro-background.png";
+          else if (path.includes("/test")) image = "test-background.png";
+          else if (path.includes("/draw")) image = "draw-background.png";
+          else if (path.includes("/result") && mbti)
+            image = `mbti/${mbti}-background.png`;
+        } catch (e) {
+          console.error("tarot_result 파싱 오류:", e);
+        }
+      }
+    }
+    setBackgroundImage(image);
+    console.log(path.includes("/result"), backgroundImage);
+  }, [path]);
 
   const FirefliesCount =
     path === "/"
@@ -95,25 +133,6 @@ export default function App({ Component, pageProps }: AppProps) {
       : path.includes("/draw")
       ? 5
       : 24;
-  useEffect(() => {
-    // 페이지 이동 시마다 스크롤 최상단으로
-    window.scrollTo(0, 0);
-  }, [router.pathname]);
-
-  useEffect(() => {
-    const handleStart = () => setIsRouteChanging(true);
-    const handleComplete = () => setIsRouteChanging(false);
-
-    router.events.on("routeChangeStart", handleStart);
-    router.events.on("routeChangeComplete", handleComplete);
-    router.events.on("routeChangeError", handleComplete);
-
-    return () => {
-      router.events.off("routeChangeStart", handleStart);
-      router.events.off("routeChangeComplete", handleComplete);
-      router.events.off("routeChangeError", handleComplete);
-    };
-  }, [router]);
 
   return (
     <AnimatePresence mode="wait" initial={false}>
@@ -123,12 +142,18 @@ export default function App({ Component, pageProps }: AppProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1, ease: "easeInOut" }}
-        className="flex flex-col justify-between min-h-screen bg-[#1a2320] overflow-hidden"
+        className={`flex flex-col justify-between min-h-screen ${
+          !path.includes("/result") ? "bg-[#1a2320]" : "bg-[#000706]"
+        } overflow-hidden`}
       >
         <motion.div
-          className="fixed top-0 left-0 w-full h-screen"
+          className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
+            !path.includes("/result")
+              ? "bg-cover bg-center"
+              : "bg-cover bg-[15%] sm:bg-[0%] lg:bg-center"
+          }`}
           style={{
-            background: `url('/assets/images/${backgroundImage}') center/cover no-repeat`,
+            backgroundImage: `url('/assets/images/${backgroundImage}')`,
             filter: "blur(0.5px) brightness(0.85)",
           }}
         />
@@ -142,10 +167,9 @@ export default function App({ Component, pageProps }: AppProps) {
             ease: "easeInOut",
           }}
         >
-          {/* 반딧불 */}
           <Fireflies count={FirefliesCount} />
         </motion.div>
-        {isRouteChanging && <LoadingOverlay />}
+        {/* {isRouteChanging && <LoadingOverlay />} */}
         <Component {...pageProps} />
       </motion.div>
     </AnimatePresence>

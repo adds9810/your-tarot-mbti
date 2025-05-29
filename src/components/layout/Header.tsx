@@ -16,7 +16,7 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 left-0 w-full z-30 flex items-center justify-between px-4 md:px-6 py-4 text-[#eae6e0] text-sm ransition-[backdrop-filter] duration-100 ${
+      className={`fixed top-0 left-0 w-full z-30 flex items-center justify-between px-4 md:px-6 py-4 text-[#eae6e0] text-sm ransition-[backdrop-filter] duration-100 ${
         scrolled
           ? "bg-[#1a2320]/60 shadow-md backdrop-blur-md"
           : "bg-transparent shadow-none backdrop-blur-0"
