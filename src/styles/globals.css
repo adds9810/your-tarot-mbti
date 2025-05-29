@@ -27,9 +27,12 @@
   }
 }
 
+html {
+  background: #000d15;
+}
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: #000d15;
   font-family: "AritaBuri", "Cormorant Garamond", serif;
   word-break: keep-all;
 }
