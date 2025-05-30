@@ -1,6 +1,6 @@
 import Layout from "@/components/layout/Layout";
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/router";
@@ -19,6 +19,29 @@ export default function DrawPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const SHUFFLE_DISPLAY_COUNT = 4;
+  const [mbti, setMbti] = useState<string | null>(null);
+  const hasCheckedSession = useRef(false);
+
+  useEffect(() => {
+    if (hasCheckedSession.current) return; // 이미 실행한 경우 스킵
+    hasCheckedSession.current = true;
+
+    const session = localStorage.getItem("tarot_result");
+    let parsedMbti;
+
+    try {
+      parsedMbti = session ? JSON.parse(session).mbti : null;
+    } catch {
+      parsedMbti = null;
+    }
+
+    if (!parsedMbti) {
+      alert("비정상적인 접근입니다. 메인 페이지로 이동합니다.");
+      router.replace("/");
+    } else {
+      setMbti(parsedMbti);
+    }
+  }, [router]);
 
   // 카드 셔플 함수
   const shuffleCards = () => {
@@ -42,14 +65,11 @@ export default function DrawPage() {
     setLoading(true);
     const question = questionType === "today" ? "오늘의 운세" : customQuestion;
 
-    const session = localStorage.getItem("tarot_session");
-    const mbti = session ? JSON.parse(session).mbti : "INFP";
-
     try {
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, card, mbti }),
+        body: JSON.stringify({ question, card, mbti }), // ✅ 여기서도 동일 변수 사용
       });
 
       const data = await res.json();
@@ -76,6 +96,7 @@ export default function DrawPage() {
   return (
     <>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>카드 선택 | 당신의 조언을 들어보세요</title>
         <meta
           name="description"
@@ -86,10 +107,6 @@ export default function DrawPage() {
           property="og:description"
           content="직접 질문을 입력하거나, 오늘의 운세를 선택해 타로카드를 뽑아보세요."
         />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://your-tarot-mbti.com/" />
-        <meta property="og:image" content="/og-image.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <Layout>
         <section

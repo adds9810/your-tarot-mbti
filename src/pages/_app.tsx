@@ -113,6 +113,8 @@ export default function App({ Component, pageProps }: AppProps) {
             image = "/assets/images/test-background.png";
           else if (path.includes("/draw"))
             image = "/assets/images/draw-background.png";
+          else if (path.includes("/about"))
+            image = "/assets/images/about-background.png";
           else if (path.includes("/result") && MBTI_PROFILE[mbti]) {
             image = MBTI_PROFILE[mbti].backgroundImage;
           }
@@ -149,7 +151,7 @@ export default function App({ Component, pageProps }: AppProps) {
           className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
             !path.includes("/result")
               ? "bg-cover bg-center"
-              : "bg-cover bg-[15%] sm:bg-[0%] lg:bg-center"
+              : "bg-cover bg-[15%] sm:-bg-[5%] lg:bg-center"
           }`}
           style={{
             backgroundImage: `url('${backgroundImage}')`,

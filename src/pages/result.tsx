@@ -1,11 +1,13 @@
 import Head from "next/head";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
-import { MBTI_PROFILE, MBTIType, isMBTIType } from "@/constants/mbtiProfile";
+import { MBTI_PROFILE, isMBTIType } from "@/constants/mbtiProfile";
+import CaptureView from "@/components/CaptureView";
+import html2canvas from "html2canvas";
 
 interface TarotResult {
   card: {
@@ -28,37 +30,82 @@ export default function ResultPage() {
   const router = useRouter();
   const [result, setResult] = useState<TarotResult | null>(null);
   const [profile, setProfile] = useState<MBTIProfile | null>(null);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const captureRef = useRef<HTMLDivElement>(null);
+  const hasCheckedSession = useRef(false);
 
   useEffect(() => {
+    if (hasCheckedSession.current) return; // 이미 실행한 경우 스킵
+    hasCheckedSession.current = true;
     const savedResult = localStorage.getItem("tarot_result");
+
     if (!savedResult) {
-      router.push("/");
+      alert("비정상적인 접근입니다. 메인 페이지로 이동합니다.");
+      router.replace("/");
       return;
     }
 
     try {
       const parsed = JSON.parse(savedResult);
-      const mbtiRaw = parsed.mbti?.toUpperCase();
-      const mbti = isMBTIType(mbtiRaw) ? mbtiRaw : "INFP"; // fallback 안전하게
+
+      const hasRequiredFields =
+        parsed &&
+        parsed.mbti &&
+        parsed.question &&
+        parsed.card &&
+        parsed.card.name &&
+        parsed.card.image &&
+        parsed.interpretation;
+
+      if (!hasRequiredFields) {
+        alert("결과 정보가 불완전합니다. 메인 페이지로 이동합니다.");
+        router.replace("/");
+        return;
+      }
+
+      const mbtiRaw = parsed.mbti.toUpperCase();
+
+      if (!isMBTIType(mbtiRaw)) {
+        alert("올바르지 않은 MBTI 정보입니다. 메인 페이지로 이동합니다.");
+        router.replace("/");
+        return;
+      }
+
+      const mbti = mbtiRaw;
 
       setResult({ ...parsed, mbti });
       setProfile(MBTI_PROFILE[mbti]);
     } catch (e) {
       console.error("tarot_result 파싱 오류:", e);
-      router.push("/");
+      alert("저장된 결과를 불러오는 데 문제가 발생했습니다.");
+      router.replace("/");
     }
   }, [router]);
 
-  const handleShare = async () => {
-    try {
-      await navigator.share({
-        title: "나의 타로 조언",
-        text: `${result?.mbti} 성향의 나에게 전해진 타로 조언`,
-        url: window.location.href,
-      });
-    } catch (error) {
-      console.error("공유하기 실패:", error);
-    }
+  //   const handleShare = async () => {
+  //     try {
+  //       await navigator.share({
+  //         title: "나의 타로 조언",
+  //         text: `${result?.mbti} 성향의 나에게 전해진 타로 조언`,
+  //         url: window.location.href,
+  //       });
+  //     } catch (error) {
+  //       console.error("공유하기 실패:", error);
+  //     }
+  //   };
+  const handleDownloadImage = async () => {
+    if (!captureRef.current || !isImageLoaded) return;
+
+    const canvas = await html2canvas(captureRef.current, {
+      scale: 2,
+      useCORS: true,
+    });
+
+    const image = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "tarot-result.png";
+    link.click();
   };
 
   if (!result || !profile) return null;
@@ -66,6 +113,7 @@ export default function ResultPage() {
   return (
     <>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>MBTI x Tarot | 성향 기반 타로 조언</title>
         <meta
           name="description"
@@ -79,37 +127,27 @@ export default function ResultPage() {
           property="og:description"
           content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다."
         />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://your-tarot-mbti.com/" />
-        <meta property="og:image" content="/og-image.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <Layout>
-        <div className="container mx-auto px-4 py-8">
-          {/* 상단 내비게이션 */}
-          <nav
-            aria-label="페이지 내비게이션"
-            className="flex justify-between items-center mb-8"
+        <div className="container mx-auto px-4 py-8 pb-[100px] sm:pb-0">
+          {/* 숨겨진 공유용 캡처 뷰 */}
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              transform: "translateX(-9999px)",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
           >
-            <Button
-              variant="ghost"
-              className="text-[#e6e1d6] hover:text-white"
-              onClick={() => router.push("/")}
-              role="link"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              처음으로
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-[#e6e1d6] hover:text-white"
-              onClick={handleShare}
-            >
-              <Share2 className="w-5 h-5 mr-2" />
-              공유하기
-            </Button>
-          </nav>
+            <CaptureView
+              ref={captureRef}
+              result={result}
+              onImageLoad={() => setIsImageLoaded(true)}
+            />
+          </div>
 
           <div className="grid md:grid-cols-2 gap-8">
             {/* MBTI 프로필 섹션 */}
@@ -139,7 +177,7 @@ export default function ResultPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
               aria-labelledby="tarot-section-title"
-              className="bg-[#1a2320]/80 rounded-2xl mt-[70%] sm:mt-[60%] md:mt-0 p-6 md:p-8 md:max-h-[calc(100vh-200px)] overflow-y-auto"
+              className="bg-[#1a2320]/80 rounded-2xl mt-[100%] sm:mt-[60%] md:mt-0 p-6 md:p-8 md:max-h-[calc(100vh-220px)] overflow-y-auto"
             >
               <h2 id="tarot-section-title" className="sr-only">
                 타로 리딩 결과
@@ -182,6 +220,25 @@ export default function ResultPage() {
                 </section>
               </div>
             </motion.section>
+          </div>
+          {/* ✅ 하단 플로팅 버튼 */}
+          <div className="fixed bottom-20 right-4 z-50 flex flex-col items-end gap-3 sm:static sm:flex-row sm:justify-end sm:mt-4 sm:mb-0">
+            <Button
+              variant="default"
+              onClick={() => router.push("/")}
+              className="rounded-full bg-[#1a1a1a]/90 text-white shadow-md px-4 py-2"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              처음으로
+            </Button>
+            <Button
+              variant="default"
+              onClick={handleDownloadImage}
+              className="rounded-full bg-[#1a1a1a]/90 text-white shadow-md px-4 py-2"
+            >
+              <Share2 className="w-4 h-4 mr-1" />
+              이미지 저장
+            </Button>
           </div>
         </div>
       </Layout>

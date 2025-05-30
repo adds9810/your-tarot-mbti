@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { useMemo } from "react";
 
-export default function LoadingOverlay() {
-  const message = useMemo(() => {
+interface LoadingOverlayProps {
+  message?: string;
+}
+
+export default function LoadingOverlay({ message }: LoadingOverlayProps) {
+  const randomMessage = useMemo(() => {
     const messages = [
       "별의 속삭임을 불러오는 중입니다.",
       "당신을 위한 운명의 한 줄을 고르고 있어요.",
@@ -28,7 +32,7 @@ export default function LoadingOverlay() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        {message}
+        {message || randomMessage}
       </motion.div>
 
       <motion.div

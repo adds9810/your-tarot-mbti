@@ -67,7 +67,7 @@ export default function TestPage() {
         (axes.PJ >= 0 ? "P" : "J");
 
       localStorage.setItem(
-        "tarot_session",
+        "tarot_result",
         JSON.stringify({
           answers: updatedAnswers,
           mbti,
