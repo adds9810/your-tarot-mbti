@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share2 } from "lucide-react";
+import { MBTI_PROFILE, MBTIType, isMBTIType } from "@/constants/mbtiProfile";
 
 interface TarotResult {
   card: {
@@ -23,15 +24,6 @@ interface MBTIProfile {
   description: string;
 }
 
-const mbtiProfiles: Record<string, MBTIProfile> = {
-  INFP: {
-    title: "이상주의적인 탐험가",
-    description:
-      "따뜻한 감성을 가진 이상주의자로, 깊은 통찰력과 창의성을 지닌 당신. 내면의 가치와 의미를 중요시하며, 타인의 감정에 민감하게 반응합니다.",
-  },
-  // ... 다른 MBTI 프로필들
-};
-
 export default function ResultPage() {
   const router = useRouter();
   const [result, setResult] = useState<TarotResult | null>(null);
@@ -44,9 +36,17 @@ export default function ResultPage() {
       return;
     }
 
-    const parsedResult = JSON.parse(savedResult);
-    setResult(parsedResult);
-    setProfile(mbtiProfiles[parsedResult.mbti] || mbtiProfiles.INFP);
+    try {
+      const parsed = JSON.parse(savedResult);
+      const mbtiRaw = parsed.mbti?.toUpperCase();
+      const mbti = isMBTIType(mbtiRaw) ? mbtiRaw : "INFP"; // fallback 안전하게
+
+      setResult({ ...parsed, mbti });
+      setProfile(MBTI_PROFILE[mbti]);
+    } catch (e) {
+      console.error("tarot_result 파싱 오류:", e);
+      router.push("/");
+    }
   }, [router]);
 
   const handleShare = async () => {
@@ -125,10 +125,10 @@ export default function ResultPage() {
                   id="mbti-profile-title"
                   className="text-3xl md:text-4xl font-serif font-bold text-[#f7f5f0] mb-4"
                 >
-                  {result.mbti} {profile.title}
+                  {result.mbti} {profile?.title ?? ""}
                 </h1>
                 <p className="text-[#e6e1d6] text-lg leading-relaxed">
-                  {profile.description}
+                  {profile?.description ?? ""}
                 </p>
               </div>
             </motion.section>

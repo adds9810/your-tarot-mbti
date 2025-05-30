@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
+import { MBTI_PROFILE, MBTIType } from "@/constants/mbtiProfile";
 // import LoadingOverlay from "@/components/LoadingOverlay";
 
-// 반딧불 particle 컴포넌트
 function Fireflies({ count = 24 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -77,13 +77,12 @@ function Fireflies({ count = 24 }) {
 export default function App({ Component, pageProps }: AppProps) {
   // const [isRouteChanging, setIsRouteChanging] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState(
-    "result-background.png"
+    "/assets/images/result-background.png"
   );
   const router = useRouter();
   const path = router.pathname;
 
   useEffect(() => {
-    // 페이지 이동 시마다 스크롤 최상단으로
     window.scrollTo(0, 0);
   }, [router.pathname]);
 
@@ -101,28 +100,28 @@ export default function App({ Component, pageProps }: AppProps) {
   //     router.events.off("routeChangeError", handleComplete);
   //   };
   // }, [router]);
-
-  // 클라이언트 사이드에서 mbti → backgroundImage 설정
   useEffect(() => {
-    let image = "result-background.png";
+    let image = "/assets/images/result-background.png";
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("tarot_result");
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
-          const mbti = parsed.mbti?.toLowerCase();
-          if (path === "/") image = "intro-background.png";
-          else if (path.includes("/test")) image = "test-background.png";
-          else if (path.includes("/draw")) image = "draw-background.png";
-          else if (path.includes("/result") && mbti)
-            image = `mbti/${mbti}-background.png`;
+          const mbti = parsed.mbti?.toUpperCase() as MBTIType;
+          if (path === "/") image = "/assets/images/intro-background.png";
+          else if (path.includes("/test"))
+            image = "/assets/images/test-background.png";
+          else if (path.includes("/draw"))
+            image = "/assets/images/draw-background.png";
+          else if (path.includes("/result") && MBTI_PROFILE[mbti]) {
+            image = MBTI_PROFILE[mbti].backgroundImage;
+          }
         } catch (e) {
           console.error("tarot_result 파싱 오류:", e);
         }
       }
     }
     setBackgroundImage(image);
-    console.log(path.includes("/result"), backgroundImage);
   }, [path]);
 
   const FirefliesCount =
@@ -153,7 +152,7 @@ export default function App({ Component, pageProps }: AppProps) {
               : "bg-cover bg-[15%] sm:bg-[0%] lg:bg-center"
           }`}
           style={{
-            backgroundImage: `url('/assets/images/${backgroundImage}')`,
+            backgroundImage: `url('${backgroundImage}')`,
             filter: "blur(0.5px) brightness(0.85)",
           }}
         />
@@ -162,10 +161,7 @@ export default function App({ Component, pageProps }: AppProps) {
           className="fixed inset-0 w-full h-full z-0"
           initial={{ scale: 1.025 }}
           animate={{ scale: 1 }}
-          transition={{
-            duration: 2,
-            ease: "easeInOut",
-          }}
+          transition={{ duration: 2, ease: "easeInOut" }}
         >
           <Fireflies count={FirefliesCount} />
         </motion.div>
