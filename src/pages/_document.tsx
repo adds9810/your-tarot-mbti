@@ -1,5 +1,4 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export default function Document() {
   return (
@@ -26,7 +25,6 @@ export default function Document() {
           property="og:image"
           content="https://your-tarot-mbti.vercel.app/assets/images/sns-share.jpg"
         />
-        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics />}
       </Head>
       <body className="antialiased">
         <Main />

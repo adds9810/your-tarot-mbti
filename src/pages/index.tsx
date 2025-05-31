@@ -132,7 +132,10 @@ export default function Home() {
           </ol>
         </section>
       </Layout>
-      <button
+      <motion.button
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 3.8, duration: 0.7 }}
         onClick={() => {
           if (typeof window !== "undefined" && window.gtag) {
             window.gtag("event", "feedback_click_main");
@@ -142,7 +145,7 @@ export default function Home() {
         className="fixed bottom-[70px] right-1/2 translate-x-1/2 sm:right-4 sm:translate-x-0 px-4 py-2 rounded bg-white text-black shadow hover:bg-gray-200 z-50"
       >
         후기 남기기
-      </button>
+      </motion.button>
       {showModal && (
         <FeedbackFormModal page="main" onClose={() => setShowModal(false)} />
       )}

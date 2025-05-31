@@ -4,7 +4,9 @@ import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { MBTI_PROFILE, MBTIType } from "@/constants/mbtiProfile";
+import { GA_ID, pageView } from "@/lib/gtag";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 function Fireflies({ count = 24 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -95,18 +97,21 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router.pathname]);
 
   useEffect(() => {
-    // 최초 접속 시 referrer 이벤트 전송
-    if (typeof window !== "undefined" && window.gtag) {
+    // 최초 방문 referrer 이벤트
+    if (
+      typeof window !== "undefined" &&
+      typeof window.gtag === "function" &&
+      GA_ID
+    ) {
       window.gtag("event", "visit_with_referrer", {
         referrer: document.referrer || "direct",
       });
     }
 
+    // 페이지 이동 시 GA 추적
     const handleRouteChange = (url: string) => {
-      if (typeof window.gtag === "function") {
-        window.gtag("config", "G-XXXXXXXXXX", {
-          page_path: url,
-        });
+      if (GA_ID) {
+        pageView(url);
       }
     };
 
@@ -160,48 +165,50 @@ export default function App({ Component, pageProps }: AppProps) {
       : 24;
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      {/* 로딩 완료 후에만 콘텐츠 표시 */}
-      {isReady ? (
-        <motion.div
-          key={router.pathname}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          className={`flex flex-col justify-between min-h-screen ${
-            !path.includes("/result") ? "bg-[#1a2320]" : "bg-[#000706]"
-          } overflow-hidden`}
-        >
-          {/* 배경 이미지 */}
+    <>
+      <GoogleAnalytics />
+      <AnimatePresence mode="wait" initial={false}>
+        {/* 로딩 완료 후에만 콘텐츠 표시 */}
+        {isReady ? (
           <motion.div
-            className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
-              !path.includes("/result")
-                ? "bg-cover bg-center"
-                : "bg-cover bg-[15%] sm:-bg-[5%] lg:bg-center"
-            }`}
-            style={{
-              backgroundImage: `url('${backgroundImage}')`,
-              filter: "blur(0.5px) brightness(0.85)",
-            }}
-          />
-
-          {/* 파이어플라이 애니메이션 */}
-          <motion.div
-            aria-hidden
-            className="fixed inset-0 w-full h-full z-0"
-            initial={{ scale: 1.025 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 2, ease: "easeInOut" }}
+            key={router.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className={`flex flex-col justify-between min-h-screen ${
+              !path.includes("/result") ? "bg-[#1a2320]" : "bg-[#000706]"
+            } overflow-hidden`}
           >
-            <Fireflies count={FirefliesCount} />
-          </motion.div>
+            {/* 배경 이미지 */}
+            <motion.div
+              className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
+                !path.includes("/result")
+                  ? "bg-cover bg-center"
+                  : "bg-cover bg-[15%] sm:-bg-[5%] lg:bg-center"
+              }`}
+              style={{
+                backgroundImage: `url('${backgroundImage}')`,
+                filter: "blur(0.5px) brightness(0.85)",
+              }}
+            />
 
-          <Component {...pageProps} />
-        </motion.div>
-      ) : (
-        <LoadingOverlay />
-      )}
-    </AnimatePresence>
+            {/* 파이어플라이 애니메이션 */}
+            <motion.div
+              aria-hidden
+              className="fixed inset-0 w-full h-full z-0"
+              initial={{ scale: 1.025 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 2, ease: "easeInOut" }}
+            >
+              <Fireflies count={FirefliesCount} />
+            </motion.div>
+            <Component {...pageProps} />
+          </motion.div>
+        ) : (
+          <LoadingOverlay />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
