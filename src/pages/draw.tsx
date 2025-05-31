@@ -83,7 +83,9 @@ export default function DrawPage() {
     const img = new Image();
     img.src = "/assets/images/cards/back.jpg";
     img.onload = () => {
-      setCardBackLoaded(true);
+      setTimeout(() => {
+        setCardBackLoaded(true);
+      }, 700);
     };
   };
 
