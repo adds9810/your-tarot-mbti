@@ -189,54 +189,60 @@ export default function ResultPage() {
             </motion.section>
 
             {/* 타로 결과 섹션 */}
-            <motion.section
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              aria-labelledby="tarot-section-title"
-              className="bg-[#1a2320]/80 rounded-2xl mt-[100%] sm:mt-[60%] md:mt-0 p-6 md:p-8 md:max-h-[calc(100vh-220px)] overflow-y-auto"
-            >
-              <h2 id="tarot-section-title" className="sr-only">
-                타로 리딩 결과
-              </h2>
+            {isImageLoaded && (
+              <motion.section
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                aria-labelledby="tarot-section-title"
+                className="bg-[#1a2320]/80 rounded-2xl mt-[100%] sm:mt-[60%] md:mt-0 p-6 md:p-8 md:max-h-[calc(100vh-220px)] overflow-y-auto"
+              >
+                <h2 id="tarot-section-title" className="sr-only">
+                  타로 리딩 결과
+                </h2>
 
-              <div className="space-y-6">
-                <section
-                  aria-labelledby="question-title "
-                  className="flex items-start justify-start gap-2 mb-2"
-                >
-                  <h3
-                    id="question-title"
-                    className="text-xl text-[#bcb8b1] inline-block "
+                <div className="space-y-6">
+                  <section
+                    aria-labelledby="question-title "
+                    className="flex items-start justify-start gap-2 mb-2"
                   >
-                    당신의 질문
-                  </h3>
-                  <p className="text-[#f7f5f0] text-lg">{result.question}</p>
-                </section>
+                    <h3
+                      id="question-title"
+                      className="text-xl text-[#bcb8b1] inline-block "
+                    >
+                      당신의 질문
+                    </h3>
+                    <p className="text-[#f7f5f0] text-lg">{result.question}</p>
+                  </section>
 
-                <figure className="relative w-full aspect-[3/4] max-w-[240px] mx-auto">
-                  <img
-                    src={`/assets/images/${result.card.image.toLowerCase()}`}
-                    alt={`${result.card.name} 카드 이미지`}
-                    className="w-full h-full object-contain rounded-lg shadow-lg"
-                  />
-                  <figcaption className="text-center text-[#e6e1d6] mt-2 text-lg">
-                    {result.card.name}
-                  </figcaption>
-                </figure>
+                  <figure className="relative w-full aspect-[3/4] max-w-[240px] mx-auto">
+                    <img
+                      src={`/assets/images/${result.card.image.toLowerCase()}`}
+                      alt={`${result.card.name} 카드 이미지`}
+                      onLoad={() => setIsImageLoaded(true)}
+                      className="w-full h-full object-contain rounded-lg shadow-lg"
+                    />
+                    <figcaption className="text-center text-[#e6e1d6] mt-2 text-lg">
+                      {result.card.name}
+                    </figcaption>
+                  </figure>
 
-                <section aria-labelledby="advice-title">
-                  <h3 id="advice-title" className="text-xl text-[#bcb8b1] mb-4">
-                    타로의 조언
-                  </h3>
-                  <div className="prose prose-invert max-w-none">
-                    <p className="text-[#f7f5f0] leading-relaxed whitespace-pre-line">
-                      {result.interpretation}
-                    </p>
-                  </div>
-                </section>
-              </div>
-            </motion.section>
+                  <section aria-labelledby="advice-title">
+                    <h3
+                      id="advice-title"
+                      className="text-xl text-[#bcb8b1] mb-4"
+                    >
+                      타로의 조언
+                    </h3>
+                    <div className="prose prose-invert max-w-none">
+                      <p className="text-[#f7f5f0] leading-relaxed whitespace-pre-line">
+                        {result.interpretation}
+                      </p>
+                    </div>
+                  </section>
+                </div>
+              </motion.section>
+            )}
           </div>
           {/* 하단 플로팅 버튼 */}
           <div className="fixed bottom-20 right-4 z-50 flex flex-col items-end gap-3 sm:static sm:flex-row sm:justify-end sm:mt-4 sm:mb-0">

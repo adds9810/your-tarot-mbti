@@ -37,6 +37,9 @@ export default function DrawPage() {
     "썅",
     "asshole",
   ];
+  const [cardBackLoaded, setCardBackLoaded] = useState(false);
+  const [shuffleDurationPassed, setShuffleDurationPassed] = useState(false);
+
   const containsBannedWord = (text: string) => {
     return bannedWords.some((word) => text.toLowerCase().includes(word));
   };
@@ -76,14 +79,28 @@ export default function DrawPage() {
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
     setShuffled(arr);
+
+    const img = new Image();
+    img.src = "/assets/images/cards/back.jpg";
+    img.onload = () => {
+      setCardBackLoaded(true);
+    };
   };
 
   // 질문 선택 완료
   const handleNext = () => {
     setStep(1);
     shuffleCards();
-    setTimeout(() => setStep(2), 1800);
+    setTimeout(() => {
+      setShuffleDurationPassed(true);
+    }, 700);
   };
+
+  useEffect(() => {
+    if (step === 1 && cardBackLoaded && shuffleDurationPassed) {
+      setStep(2);
+    }
+  }, [step, cardBackLoaded, shuffleDurationPassed]);
 
   const handleCustomQuestion = () => {
     const trimmed = customQuestion.trim();
