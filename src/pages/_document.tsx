@@ -7,6 +7,14 @@ export default function Document() {
         <link
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&display=swap"
           rel="stylesheet"
+        />{" "}
+        <meta
+          property="og:title"
+          content="MBTI x Tarot | 성향 기반 타로 조언"
+        />
+        <meta
+          property="og:description"
+          content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다."
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://your-tarot-mbti.vercel.app/" />
