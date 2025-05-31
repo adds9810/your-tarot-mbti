@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { MBTI_PROFILE, MBTIType } from "@/constants/mbtiProfile";
-// import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 function Fireflies({ count = 24 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -78,7 +78,12 @@ function Fireflies({ count = 24 }) {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  // const [isRouteChanging, setIsRouteChanging] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [backgroundImage, setBackgroundImage] = useState(
     "/assets/images/background/result-background.jpg"
   );
@@ -111,21 +116,6 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
-  // useEffect(() => {
-  //   const handleStart = () => setIsRouteChanging(true);
-  //   const handleComplete = () => setIsRouteChanging(false);
-
-  //   router.events.on("routeChangeStart", handleStart);
-  //   router.events.on("routeChangeComplete", handleComplete);
-  //   router.events.on("routeChangeError", handleComplete);
-
-  //   return () => {
-  //     router.events.off("routeChangeStart", handleStart);
-  //     router.events.off("routeChangeComplete", handleComplete);
-  //     router.events.off("routeChangeError", handleComplete);
-  //   };
-  // }, [router]);
-
   useEffect(() => {
     let image = "/assets/images/background/result-background.jpg";
 
@@ -150,9 +140,16 @@ export default function App({ Component, pageProps }: AppProps) {
       }
     }
 
+    const img = new Image();
+    img.src = image;
+    img.onload = () => {
+      setIsReady(true);
+    };
+
     setBackgroundImage(image);
   }, [path]);
 
+  if (!mounted) return null;
   const FirefliesCount =
     path === "/"
       ? 28
@@ -164,39 +161,47 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={router.pathname}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className={`flex flex-col justify-between min-h-screen ${
-          !path.includes("/result") ? "bg-[#1a2320]" : "bg-[#000706]"
-        } overflow-hidden`}
-      >
+      {/* 로딩 완료 후에만 콘텐츠 표시 */}
+      {isReady ? (
         <motion.div
-          className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
-            !path.includes("/result")
-              ? "bg-cover bg-center"
-              : "bg-cover bg-[15%] sm:-bg-[5%] lg:bg-center"
-          }`}
-          style={{
-            backgroundImage: `url('${backgroundImage}')`,
-            filter: "blur(0.5px) brightness(0.85)",
-          }}
-        />
-        <motion.div
-          aria-hidden
-          className="fixed inset-0 w-full h-full z-0"
-          initial={{ scale: 1.025 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
+          key={router.pathname}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className={`flex flex-col justify-between min-h-screen ${
+            !path.includes("/result") ? "bg-[#1a2320]" : "bg-[#000706]"
+          } overflow-hidden`}
         >
-          <Fireflies count={FirefliesCount} />
+          {/* 배경 이미지 */}
+          <motion.div
+            className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
+              !path.includes("/result")
+                ? "bg-cover bg-center"
+                : "bg-cover bg-[15%] sm:-bg-[5%] lg:bg-center"
+            }`}
+            style={{
+              backgroundImage: `url('${backgroundImage}')`,
+              filter: "blur(0.5px) brightness(0.85)",
+            }}
+          />
+
+          {/* 파이어플라이 애니메이션 */}
+          <motion.div
+            aria-hidden
+            className="fixed inset-0 w-full h-full z-0"
+            initial={{ scale: 1.025 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 2, ease: "easeInOut" }}
+          >
+            <Fireflies count={FirefliesCount} />
+          </motion.div>
+
+          <Component {...pageProps} />
         </motion.div>
-        {/* {isRouteChanging && <LoadingOverlay />} */}
-        <Component {...pageProps} />
-      </motion.div>
+      ) : (
+        <LoadingOverlay />
+      )}
     </AnimatePresence>
   );
 }
