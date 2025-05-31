@@ -24,11 +24,11 @@ export default function TestPage() {
   const [started, setStarted] = useState(false); // 인트로 여부
   const router = useRouter();
   const [answers, setAnswers] = useState<number[]>([]);
-
   useEffect(() => {
     if (typeof window !== "undefined" && window.gtag) {
       window.gtag("event", "test_viewed");
     }
+    localStorage.removeItem("tarot_result");
   }, []);
 
   const handleSelect = (value: number) => {

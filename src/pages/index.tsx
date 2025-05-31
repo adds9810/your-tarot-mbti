@@ -133,9 +133,9 @@ export default function Home() {
         </section>
       </Layout>
       <motion.button
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 3.8, duration: 0.7 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 4, duration: 0.7 }}
         onClick={() => {
           if (typeof window !== "undefined" && window.gtag) {
             window.gtag("event", "feedback_click_main");
