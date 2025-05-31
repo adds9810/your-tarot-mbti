@@ -29,10 +29,8 @@ export default function FeedbackFormModal({
       return;
     }
 
-    setIsSubmitting(true); // ⬅️ 전송 시작
+    setIsSubmitting(true);
     setErrorMessage("");
-
-    setErrorMessage(""); // 에러 초기화
 
     const { error } = await supabase.from("mbti_feedbacks").insert({
       nickname,
@@ -58,6 +56,9 @@ export default function FeedbackFormModal({
         setContent("");
         setIsSubmitting(false);
         onClose();
+        if (page === "about") {
+          window.location.reload();
+        }
       }, 1500);
     } else {
       console.error("후기 저장 실패", error);

@@ -5,13 +5,15 @@ import Head from "next/head";
 import Layout from "@/components/layout/Layout";
 import { motion, useInView } from "framer-motion";
 import { useRouter } from "next/router";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import FeedbackList from "@/components/FeedbackList";
+import FeedbackFormModal from "@/components/FeedbackFormModal";
 
 export default function AboutPage() {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
 
   const introRef = useRef(null);
   const introInView = useInView(introRef, { once: true, margin: "-100px" });
@@ -119,8 +121,32 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={isFeedbackInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.2 }}
+            className="max-w-3xl mx-auto mb-16"
           >
+            <h2 className="text-2xl font-serif font-bold text-[#f7f5f0] mb-6">
+              방문자들의 이야기
+            </h2>
             <FeedbackList />
+            <div className="text-center mt-10">
+              <Button
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.gtag) {
+                    window.gtag("event", "feedback_click_about");
+                  }
+                  setShowModal(true);
+                }}
+                className="bg-[#f7f5f0] text-black hover:bg-[#e2e0d8] px-6 py-3 rounded-full transition"
+              >
+                ✍ 후기 남기기
+              </Button>
+            </div>
+
+            {showModal && (
+              <FeedbackFormModal
+                page="about"
+                onClose={() => setShowModal(false)}
+              />
+            )}
           </motion.section>
 
           {/* 제작자 소개 섹션 */}

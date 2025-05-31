@@ -39,14 +39,16 @@ export default function FeedbackList() {
     currentPage * itemsPerPage
   );
 
-  if (feedbacks.length === 0) return null;
+  if (feedbacks.length === 0) {
+    return (
+      <p className="mb-6 text-center text-[#bcb8b1]">
+        아직 남겨진 이야기가 없어요.
+      </p>
+    );
+  }
 
   return (
-    <div className="max-w-3xl mx-auto mb-16">
-      <h2 className="text-2xl font-serif font-bold text-[#f7f5f0] mb-6">
-        방문자들의 이야기
-      </h2>
-
+    <>
       <div className="grid md:grid-cols-2 gap-6">
         {currentItems.map((fb) => (
           <button
@@ -122,6 +124,6 @@ export default function FeedbackList() {
           }
         />
       )}
-    </div>
+    </>
   );
 }
