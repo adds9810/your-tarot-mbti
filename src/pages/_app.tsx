@@ -13,8 +13,11 @@ function Fireflies({ count = 24 }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    // eslint-disable-next-line prefer-const
     let dpr = window.devicePixelRatio || 1;
+    // eslint-disable-next-line prefer-const
     let width = window.innerWidth;
+    // eslint-disable-next-line prefer-const
     let height = window.innerHeight;
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -102,27 +105,27 @@ export default function App({ Component, pageProps }: AppProps) {
   // }, [router]);
   useEffect(() => {
     let image = "/assets/images/result-background.png";
+
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("tarot_result");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          const mbti = parsed.mbti?.toUpperCase() as MBTIType;
-          if (path === "/") image = "/assets/images/intro-background.png";
-          else if (path.includes("/test"))
-            image = "/assets/images/test-background.png";
-          else if (path.includes("/draw"))
-            image = "/assets/images/draw-background.png";
-          else if (path.includes("/about"))
-            image = "/assets/images/about-background.png";
-          else if (path.includes("/result") && MBTI_PROFILE[mbti]) {
-            image = MBTI_PROFILE[mbti].backgroundImage;
-          }
-        } catch (e) {
-          console.error("tarot_result 파싱 오류:", e);
+      try {
+        const stored = localStorage.getItem("tarot_result");
+        const parsed = stored ? JSON.parse(stored) : null;
+        const mbti = parsed?.mbti?.toUpperCase() as MBTIType;
+        if (path === "/") image = "/assets/images/intro-background.png";
+        else if (path.includes("/test"))
+          image = "/assets/images/test-background.png";
+        else if (path.includes("/draw"))
+          image = "/assets/images/draw-background.png";
+        else if (path.includes("/about"))
+          image = "/assets/images/about-background.png";
+        else if (path.includes("/result") && mbti && MBTI_PROFILE[mbti]) {
+          image = MBTI_PROFILE[mbti].backgroundImage;
         }
+      } catch (e) {
+        console.error("❌ tarot_result 파싱 오류:", e);
       }
     }
+
     setBackgroundImage(image);
   }, [path]);
 
@@ -142,7 +145,7 @@ export default function App({ Component, pageProps }: AppProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 1, ease: "easeInOut" }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
         className={`flex flex-col justify-between min-h-screen ${
           !path.includes("/result") ? "bg-[#1a2320]" : "bg-[#000706]"
         } overflow-hidden`}

@@ -1,13 +1,15 @@
+/* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft, Share2, MessageCircleMore } from "lucide-react";
 import { MBTI_PROFILE, isMBTIType } from "@/constants/mbtiProfile";
 import CaptureView from "@/components/CaptureView";
 import html2canvas from "html2canvas";
+import FeedbackFormModal from "@/components/FeedbackFormModal"; // 💡 모달 import
 
 interface TarotResult {
   card: {
@@ -28,6 +30,7 @@ interface MBTIProfile {
 
 export default function ResultPage() {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
   const [result, setResult] = useState<TarotResult | null>(null);
   const [profile, setProfile] = useState<MBTIProfile | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -239,7 +242,22 @@ export default function ResultPage() {
               <Share2 className="w-4 h-4 mr-1" />
               이미지 저장
             </Button>
+            <Button
+              variant="default"
+              onClick={() => setShowModal(true)}
+              className="rounded-full bg-[#1a1a1a]/90 text-white shadow-md px-4 py-2"
+            >
+              <MessageCircleMore className="w-4 h-4 mr-1" />
+              후기 남기기
+            </Button>
           </div>
+          {/* ✅ 후기 모달 */}
+          {showModal && (
+            <FeedbackFormModal
+              page="result"
+              onClose={() => setShowModal(false)}
+            />
+          )}
         </div>
       </Layout>
     </>

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { forwardRef } from "react";
 import { MBTI_PROFILE, MBTIType } from "@/constants/mbtiProfile";
 
@@ -44,7 +45,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
             zIndex: 0,
           }}
         />
-
         {/* 🔼 모든 콘텐츠는 위에 올라가게 zIndex: 1 적용 */}
         <div style={{ position: "relative", zIndex: 1 }}>
           <h2
@@ -56,7 +56,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           >
             조용한 흐름의 시작
           </h2>
-
           <p
             style={{
               textAlign: "center",
@@ -67,7 +66,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           >
             {result.mbti} · {profile.title}에게 전하는 메시지
           </p>
-
           <p style={{ marginBottom: "8px", color: "#bcb8b1" }}>
             질문: {result.question}
           </p>
@@ -82,7 +80,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
               padding: "8px 0",
             }}
           />
-
           <p
             style={{
               textAlign: "center",
@@ -92,9 +89,7 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           >
             {result.card.name}
           </p>
-
           <p style={{ whiteSpace: "pre-line" }}>{result.interpretation}</p>
-
           <p
             style={{
               textAlign: "center",

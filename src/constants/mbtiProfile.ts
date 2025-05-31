@@ -1,5 +1,3 @@
-// src/constants/mbtiProfile.ts
-
 export type MBTIType =
   | "INFP"
   | "INFJ"
@@ -17,26 +15,30 @@ export type MBTIType =
   | "ESFJ"
   | "ESTJ"
   | "ESTP";
-export function isMBTIType(value: any): value is MBTIType {
-  return [
-    "INFP",
-    "INFJ",
-    "INTJ",
-    "INTP",
-    "ENFP",
-    "ENFJ",
-    "ENTJ",
-    "ENTP",
-    "ISFP",
-    "ISFJ",
-    "ISTJ",
-    "ISTP",
-    "ESFP",
-    "ESFJ",
-    "ESTJ",
-    "ESTP",
-  ].includes(value);
+export function isMBTIType(value: unknown): value is MBTIType {
+  return (
+    typeof value === "string" &&
+    [
+      "INFP",
+      "INFJ",
+      "INTJ",
+      "INTP",
+      "ENFP",
+      "ENFJ",
+      "ENTJ",
+      "ENTP",
+      "ISFP",
+      "ISFJ",
+      "ISTJ",
+      "ISTP",
+      "ESFP",
+      "ESFJ",
+      "ESTJ",
+      "ESTP",
+    ].includes(value)
+  );
 }
+
 export const MBTI_PROFILE: Record<
   MBTIType,
   {

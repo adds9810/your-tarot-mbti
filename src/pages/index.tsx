@@ -2,8 +2,8 @@ import Head from "next/head";
 import Link from "next/link";
 import Layout from "@/components/layout/Layout";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import FeedbackFormModal from "@/components/FeedbackFormModal";
 const sentences = [
   "마음이 머무는 새벽의 숲에서,",
   "당신에게만 속삭이는 조언을 전합니다.",
@@ -17,6 +17,8 @@ const steps = [
 ];
 
 export default function Home() {
+  const [showModal, setShowModal] = useState(false);
+
   useEffect(() => {
     localStorage.removeItem("tarot_result");
   }, []);
@@ -125,6 +127,15 @@ export default function Home() {
           </ol>
         </section>
       </Layout>
+      <button
+        onClick={() => setShowModal(true)}
+        className="fixed bottom-[70px] right-1/2 translate-x-1/2 sm:right-4 sm:translate-x-0 px-4 py-2 rounded bg-white text-black shadow hover:bg-gray-200 z-50"
+      >
+        후기 남기기
+      </button>
+      {showModal && (
+        <FeedbackFormModal page="main" onClose={() => setShowModal(false)} />
+      )}
     </>
   );
 }

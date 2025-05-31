@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Layout from "@/components/layout/Layout";
 import Head from "next/head";
 import { useState, useEffect, useRef } from "react";
@@ -21,6 +22,8 @@ export default function DrawPage() {
   const SHUFFLE_DISPLAY_COUNT = 4;
   const [mbti, setMbti] = useState<string | null>(null);
   const hasCheckedSession = useRef(false);
+  const [questionError, setQuestionError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (hasCheckedSession.current) return; // 이미 실행한 경우 스킵
@@ -164,26 +167,46 @@ export default function DrawPage() {
                         특정한 질문이 있다면 적어보세요
                       </span>
                       <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-                        <Input
-                          aria-label="직접 질문 입력"
-                          placeholder="예: 내일 중요한 일이 잘 풀릴까요?"
-                          className="rounded-xl bg-[#fffbe6] text-[#1a2320] placeholder:text-[#bcb8b1] border-[#bcb8b1] focus:border-[#e6e1d6] flex-1 min-w-[240px]"
-                          value={customQuestion}
-                          onChange={(e) => {
-                            setCustomQuestion(e.target.value);
-                            setQuestionType("custom");
-                          }}
-                          maxLength={40}
-                        />
+                        <div className="flex-1">
+                          <Input
+                            ref={inputRef}
+                            value={customQuestion}
+                            onChange={(e) => {
+                              setCustomQuestion(e.target.value);
+                              setQuestionType("custom");
+                              if (questionError) setQuestionError("");
+                            }}
+                            onKeyDown={(e) => {
+                              if (
+                                e.key === "Enter" &&
+                                customQuestion.trim().length >= 2
+                              ) {
+                                e.preventDefault(); // 엔터 기본 제출 방지
+                                handleNext();
+                              }
+                            }}
+                            placeholder="예: 내일 중요한 일이 잘 풀릴까요?"
+                            className="rounded-xl bg-[#fffbe6] text-[#1a2320] placeholder:text-[#bcb8b1] border-[#bcb8b1] focus:border-[#e6e1d6] w-full"
+                            maxLength={40}
+                          />
+                          {questionError && (
+                            <p className="text-red-400 text-xs mt-1">
+                              {questionError}
+                            </p>
+                          )}
+                        </div>
+
                         <Button
-                          aria-label="입력한 질문으로 운세 보기"
-                          className="px-6 py-3 rounded-xl bg-white/80 hover:bg-muted text-gray-700 transition font-semibold text-lg"
                           onClick={() => {
-                            if (customQuestion.trim().length > 1) {
-                              handleNext();
+                            if (customQuestion.trim().length < 2) {
+                              setQuestionError("질문을 2자 이상 입력해주세요.");
+                              inputRef.current?.focus();
+                              return;
                             }
+                            handleNext();
                           }}
                           disabled={customQuestion.trim().length < 2}
+                          className="px-6 py-3 rounded-xl bg-white/80 hover:bg-muted text-gray-700 transition font-semibold text-lg"
                         >
                           운세 보기
                         </Button>
