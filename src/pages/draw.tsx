@@ -85,7 +85,7 @@ export default function DrawPage() {
     img.onload = () => {
       setTimeout(() => {
         setCardBackLoaded(true);
-      }, 700);
+      }, 1400);
     };
   };
 
@@ -95,7 +95,7 @@ export default function DrawPage() {
     shuffleCards();
     setTimeout(() => {
       setShuffleDurationPassed(true);
-    }, 700);
+    }, 1400);
   };
 
   useEffect(() => {

@@ -109,6 +109,7 @@ export default function ResultPage() {
     const canvas = await html2canvas(captureRef.current, {
       scale: 2,
       useCORS: true,
+      backgroundColor: "#1a2320",
     });
 
     const image = canvas.toDataURL("image/png");

@@ -29,11 +29,16 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           padding: "24px",
           fontFamily: "serif",
           overflow: "hidden",
+          backgroundColor: "#1a2320",
+          backgroundImage:
+            "url('/assets/images/background/result-background.jpg')", // ✅ 백그라운드 이미지 추가
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         {/* 🔽 백그라운드 이미지 실제로 넣기 */}
         <img
-          src="/assets/images/result-background.jpg"
+          src="/assets/images/background/result-background.jpg"
           alt="background"
           style={{
             position: "absolute",
