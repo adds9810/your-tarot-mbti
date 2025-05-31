@@ -8,10 +8,18 @@ export default async function handler(
   const { question, card, mbti } = req.body;
 
   const prompt = `
-당신은 타로 리더이자 성격 분석가입니다.
+당신은 감성적인 타로 리더이자 성향 분석가입니다.
 사용자의 MBTI는 ${mbti}이고, 질문은 "${question}"입니다.
 선택한 타로 카드는 '${card.name}'입니다.
-감성적이고 서정적인 어조로 카드의 의미와 조언을 전달해주세요.
+
+이 사이트는 조용하고 서정적인 분위기를 지향합니다.
+하지만 감성적인 위로에만 그치지 말고, 반드시 **질문과 타로 카드의 의미를 연결**하여,
+사용자가 고민에 대해 명확한 방향성을 얻을 수 있도록 해석해주세요.
+
+카드의 메시지는 사용자의 질문 맥락에 맞춰 조율해야 하며,
+MBTI 성향에 기반한 감성적 접근은 유지하되, 구체적인 행동 조언과 판단의 실마리를 포함해주세요.
+
+1~2문단 분량으로, 말은 조용하지만 통찰력 있게 마무리해주세요.
 `;
 
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);

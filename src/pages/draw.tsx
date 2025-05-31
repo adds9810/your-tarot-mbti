@@ -24,6 +24,22 @@ export default function DrawPage() {
   const hasCheckedSession = useRef(false);
   const [questionError, setQuestionError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const bannedWords = [
+    "씨발",
+    "좆",
+    "fuck",
+    "shit",
+    "ㅅㅂ",
+    "병신",
+    "멍청이",
+    "개새",
+    "좃",
+    "썅",
+    "asshole",
+  ];
+  const containsBannedWord = (text: string) => {
+    return bannedWords.some((word) => text.toLowerCase().includes(word));
+  };
 
   useEffect(() => {
     if (hasCheckedSession.current) return; // 이미 실행한 경우 스킵
@@ -44,6 +60,12 @@ export default function DrawPage() {
     } else {
       setMbti(parsedMbti);
     }
+
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "page_view", {
+        page: "/draw",
+      });
+    }
   }, [router]);
 
   // 카드 셔플 함수
@@ -61,6 +83,31 @@ export default function DrawPage() {
     setStep(1);
     shuffleCards();
     setTimeout(() => setStep(2), 1800);
+  };
+
+  const handleCustomQuestion = () => {
+    const trimmed = customQuestion.trim();
+
+    if (trimmed.length < 2) {
+      setQuestionError("질문을 2자 이상 입력해주세요.");
+      inputRef.current?.focus();
+      return;
+    }
+
+    if (containsBannedWord(trimmed)) {
+      setQuestionError("부적절한 표현이 포함되어 있어요. 다시 작성해주세요.");
+      inputRef.current?.focus();
+      return;
+    }
+
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "draw_started", {
+        type: "custom",
+        question: trimmed,
+      });
+    }
+
+    handleNext();
   };
 
   // 카드 선택 완료
@@ -100,15 +147,22 @@ export default function DrawPage() {
     <>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>카드 선택 | 당신의 조언을 들어보세요</title>
+        <title>타로 카드 선택 | 조용한 새벽의 타로 운세</title>
         <meta
           name="description"
-          content="성향에 따라 조용히 건네는 타로 조언을 위한 카드 선택 페이지입니다."
+          content="직접 질문하거나 오늘의 운세를 선택해, 감성적인 타로 카드 리딩을 경험하세요. 성향에 맞춘 카드 리딩을 제공합니다."
         />
-        <meta property="og:title" content="카드 선택 | 조용한 새벽의 타로" />
+        <meta
+          name="keywords"
+          content="타로, 타로카드, 오늘의 운세, 카드 뽑기, 감성 타로, 조용한 타로, MBTI 타로"
+        />
+        <meta
+          property="og:title"
+          content="타로 카드 선택 | 조용한 새벽의 타로"
+        />
         <meta
           property="og:description"
-          content="직접 질문을 입력하거나, 오늘의 운세를 선택해 타로카드를 뽑아보세요."
+          content="질문을 선택하고 타로카드를 직접 뽑아보세요. 감성적인 해석과 함께하는 리딩 경험."
         />
       </Head>
       <Layout>
@@ -150,6 +204,12 @@ export default function DrawPage() {
                         aria-label="오늘의 운세 보기"
                         className="rounded-xl px-8 py-3 text-lg font-semibold shadow-md bg-[#fffbe6] text-[#1a2320] hover:bg-[#e6e1d6] focus-visible:ring-2 focus-visible:ring-[#bcb8b1] transition"
                         onClick={() => {
+                          if (typeof window !== "undefined" && window.gtag) {
+                            window.gtag("event", "draw_started", {
+                              type: "today",
+                            });
+                          }
+
                           setQuestionType("today");
                           setCustomQuestion("오늘의 운세가 궁금해요");
                           handleNext();
@@ -166,29 +226,34 @@ export default function DrawPage() {
                       <span className="text-[#e6e1d6] mb-2 font-serif text-lg">
                         특정한 질문이 있다면 적어보세요
                       </span>
-                      <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
-                        <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 w-full">
+                        <div className="flex-1 w-full">
                           <Input
-                            ref={inputRef}
+                            maxLength={39}
                             value={customQuestion}
                             onChange={(e) => {
                               setCustomQuestion(e.target.value);
                               setQuestionType("custom");
                               if (questionError) setQuestionError("");
                             }}
-                            onKeyDown={(e) => {
-                              if (
-                                e.key === "Enter" &&
-                                customQuestion.trim().length >= 2
-                              ) {
-                                e.preventDefault(); // 엔터 기본 제출 방지
-                                handleNext();
-                              }
-                            }}
-                            placeholder="예: 내일 중요한 일이 잘 풀릴까요?"
-                            className="rounded-xl bg-[#fffbe6] text-[#1a2320] placeholder:text-[#bcb8b1] border-[#bcb8b1] focus:border-[#e6e1d6] w-full"
-                            maxLength={40}
+                            className={`rounded-xl bg-[#fffbe6] text-[#1a2320] placeholder:text-[#bcb8b1] w-full pr-16 ${
+                              customQuestion.length >= 39
+                                ? "border-red-400 focus:border-red-400"
+                                : "border-[#bcb8b1] focus:border-[#e6e1d6]"
+                            }`}
+                            aria-describedby="question-length"
                           />
+
+                          <div
+                            id="question-length"
+                            role="status"
+                            aria-live="polite"
+                            aria-atomic="true"
+                            className="mt-1 text-right text-sm text-[#bcb8b1] font-mono"
+                          >
+                            {customQuestion.length} / 40
+                          </div>
+
                           {questionError && (
                             <p className="text-red-400 text-xs mt-1">
                               {questionError}
@@ -197,14 +262,7 @@ export default function DrawPage() {
                         </div>
 
                         <Button
-                          onClick={() => {
-                            if (customQuestion.trim().length < 2) {
-                              setQuestionError("질문을 2자 이상 입력해주세요.");
-                              inputRef.current?.focus();
-                              return;
-                            }
-                            handleNext();
-                          }}
+                          onClick={handleCustomQuestion} // ✅ 이 버튼에서만 handleCustomQuestion 호출
                           disabled={customQuestion.trim().length < 2}
                           className="px-6 py-3 rounded-xl bg-white/80 hover:bg-muted text-gray-700 transition font-semibold text-lg"
                         >

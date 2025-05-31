@@ -80,7 +80,7 @@ function Fireflies({ count = 24 }) {
 export default function App({ Component, pageProps }: AppProps) {
   // const [isRouteChanging, setIsRouteChanging] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState(
-    "/assets/images/result-background.png"
+    "/assets/images/background/result-background.png"
   );
   const router = useRouter();
   const path = router.pathname;
@@ -88,6 +88,28 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [router.pathname]);
+
+  useEffect(() => {
+    // 최초 접속 시 referrer 이벤트 전송
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "visit_with_referrer", {
+        referrer: document.referrer || "direct",
+      });
+    }
+
+    const handleRouteChange = (url: string) => {
+      if (typeof window.gtag === "function") {
+        window.gtag("config", "G-XXXXXXXXXX", {
+          page_path: url,
+        });
+      }
+    };
+
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
 
   // useEffect(() => {
   //   const handleStart = () => setIsRouteChanging(true);
@@ -103,21 +125,23 @@ export default function App({ Component, pageProps }: AppProps) {
   //     router.events.off("routeChangeError", handleComplete);
   //   };
   // }, [router]);
+
   useEffect(() => {
-    let image = "/assets/images/result-background.png";
+    let image = "/assets/images/background/result-background.png";
 
     if (typeof window !== "undefined") {
       try {
         const stored = localStorage.getItem("tarot_result");
         const parsed = stored ? JSON.parse(stored) : null;
         const mbti = parsed?.mbti?.toUpperCase() as MBTIType;
-        if (path === "/") image = "/assets/images/intro-background.png";
+        if (path === "/")
+          image = "/assets/images/background/intro-background.png";
         else if (path.includes("/test"))
-          image = "/assets/images/test-background.png";
+          image = "/assets/images/background/test-background.png";
         else if (path.includes("/draw"))
-          image = "/assets/images/draw-background.png";
+          image = "/assets/images/background/draw-background.png";
         else if (path.includes("/about"))
-          image = "/assets/images/about-background.png";
+          image = "/assets/images/background/about-background.png";
         else if (path.includes("/result") && mbti && MBTI_PROFILE[mbti]) {
           image = MBTI_PROFILE[mbti].backgroundImage;
         }

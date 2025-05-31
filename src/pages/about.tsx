@@ -5,7 +5,7 @@ import Head from "next/head";
 import Layout from "@/components/layout/Layout";
 import { motion, useInView } from "framer-motion";
 import { useRouter } from "next/router";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import FeedbackList from "@/components/FeedbackList";
@@ -30,6 +30,14 @@ export default function AboutPage() {
 
   const ctaRef = useRef(null);
   const ctaInView = useInView(ctaRef, { once: true, margin: "-100px" });
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "page_view", {
+        page: "/about",
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -145,7 +153,7 @@ export default function AboutPage() {
               조용한 조언을 받아보고 싶다면?
             </h2>
             <Button
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/about")}
               className="bg-[#1a2320] hover:bg-[#2a3230] text-white px-8 py-6 rounded-full text-lg transition-all duration-300"
             >
               시작하러 가기

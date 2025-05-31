@@ -2,7 +2,7 @@ import Head from "next/head";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 const questions = [
@@ -24,6 +24,12 @@ export default function TestPage() {
   const [started, setStarted] = useState(false); // 인트로 여부
   const router = useRouter();
   const [answers, setAnswers] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "test_viewed");
+    }
+  }, []);
 
   const handleSelect = (value: number) => {
     const updatedAnswers = [...answers, value];
@@ -83,6 +89,7 @@ export default function TestPage() {
   return (
     <>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>성향 테스트 | 마음의 흐름 따라가기</title>
         <meta
           name="description"
@@ -93,10 +100,6 @@ export default function TestPage() {
           property="og:description"
           content="당신의 성향을 감성적인 6문항 테스트로 알아보세요."
         />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://your-tarot-mbti.com/" />
-        <meta property="og:image" content="/og-image.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <Layout>

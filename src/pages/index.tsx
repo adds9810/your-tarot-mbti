@@ -21,6 +21,11 @@ export default function Home() {
 
   useEffect(() => {
     localStorage.removeItem("tarot_result");
+
+    // GA 이벤트 - 메인 진입
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "main_viewed");
+    }
   }, []);
 
   return (
@@ -128,7 +133,12 @@ export default function Home() {
         </section>
       </Layout>
       <button
-        onClick={() => setShowModal(true)}
+        onClick={() => {
+          if (typeof window !== "undefined" && window.gtag) {
+            window.gtag("event", "feedback_click_main");
+          }
+          setShowModal(true);
+        }}
         className="fixed bottom-[70px] right-1/2 translate-x-1/2 sm:right-4 sm:translate-x-0 px-4 py-2 rounded bg-white text-black shadow hover:bg-gray-200 z-50"
       >
         후기 남기기

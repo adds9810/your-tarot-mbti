@@ -67,15 +67,22 @@ export default function ResultPage() {
       }
 
       const mbtiRaw = parsed.mbti.toUpperCase();
-
       if (!isMBTIType(mbtiRaw)) {
         alert("올바르지 않은 MBTI 정보입니다. 메인 페이지로 이동합니다.");
         router.replace("/");
         return;
       }
 
-      const mbti = mbtiRaw;
+      // 트래킹 코드 삽입
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag("event", "result_page_view", {
+          mbti: mbtiRaw,
+          question: parsed.question,
+          card: parsed.card.name,
+        });
+      }
 
+      const mbti = mbtiRaw;
       setResult({ ...parsed, mbti });
       setProfile(MBTI_PROFILE[mbti]);
     } catch (e) {
@@ -109,6 +116,13 @@ export default function ResultPage() {
     link.href = image;
     link.download = "tarot-result.png";
     link.click();
+
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "image_saved", {
+        card: result?.card.name,
+        mbti: result?.mbti,
+      });
+    }
   };
 
   if (!result || !profile) return null;
@@ -224,7 +238,7 @@ export default function ResultPage() {
               </div>
             </motion.section>
           </div>
-          {/* ✅ 하단 플로팅 버튼 */}
+          {/* 하단 플로팅 버튼 */}
           <div className="fixed bottom-20 right-4 z-50 flex flex-col items-end gap-3 sm:static sm:flex-row sm:justify-end sm:mt-4 sm:mb-0">
             <Button
               variant="default"
@@ -244,14 +258,22 @@ export default function ResultPage() {
             </Button>
             <Button
               variant="default"
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                setShowModal(true);
+                if (typeof window !== "undefined" && window.gtag) {
+                  window.gtag("event", "review_clicked", {
+                    mbti: result?.mbti,
+                    card: result?.card.name,
+                  });
+                }
+              }}
               className="rounded-full bg-[#1a1a1a]/90 text-white shadow-md px-4 py-2"
             >
               <MessageCircleMore className="w-4 h-4 mr-1" />
               후기 남기기
             </Button>
           </div>
-          {/* ✅ 후기 모달 */}
+          {/*  후기 모달 */}
           {showModal && (
             <FeedbackFormModal
               page="result"
