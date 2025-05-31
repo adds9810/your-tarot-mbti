@@ -218,7 +218,7 @@ export default function StyleGuide() {
   <meta property="og:description" content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://your-tarot-mbti.com/" />
-  <meta property="og:image" content="/og-image.png" />
+  <meta property="og:image" content="/og-image.jpg" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </Head>`}
           </pre>

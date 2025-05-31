@@ -262,7 +262,7 @@ export default function DrawPage() {
                         </div>
 
                         <Button
-                          onClick={handleCustomQuestion} // ✅ 이 버튼에서만 handleCustomQuestion 호출
+                          onClick={handleCustomQuestion}
                           disabled={customQuestion.trim().length < 2}
                           className="px-6 py-3 rounded-xl bg-white/80 hover:bg-muted text-gray-700 transition font-semibold text-lg"
                         >
@@ -365,7 +365,7 @@ export default function DrawPage() {
                         style={{ outline: "none" }}
                       >
                         <img
-                          src="/assets/images/cards/back.png"
+                          src="/assets/images/cards/back.jpg"
                           alt="타로 카드 뒷면"
                           className="w-full h-full object-contain select-none pointer-events-none"
                           draggable={false}

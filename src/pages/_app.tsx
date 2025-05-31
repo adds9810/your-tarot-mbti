@@ -80,7 +80,7 @@ function Fireflies({ count = 24 }) {
 export default function App({ Component, pageProps }: AppProps) {
   // const [isRouteChanging, setIsRouteChanging] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState(
-    "/assets/images/background/result-background.png"
+    "/assets/images/background/result-background.jpg"
   );
   const router = useRouter();
   const path = router.pathname;
@@ -127,7 +127,7 @@ export default function App({ Component, pageProps }: AppProps) {
   // }, [router]);
 
   useEffect(() => {
-    let image = "/assets/images/background/result-background.png";
+    let image = "/assets/images/background/result-background.jpg";
 
     if (typeof window !== "undefined") {
       try {
@@ -135,13 +135,13 @@ export default function App({ Component, pageProps }: AppProps) {
         const parsed = stored ? JSON.parse(stored) : null;
         const mbti = parsed?.mbti?.toUpperCase() as MBTIType;
         if (path === "/")
-          image = "/assets/images/background/intro-background.png";
+          image = "/assets/images/background/intro-background.jpg";
         else if (path.includes("/test"))
-          image = "/assets/images/background/test-background.png";
+          image = "/assets/images/background/test-background.jpg";
         else if (path.includes("/draw"))
-          image = "/assets/images/background/draw-background.png";
+          image = "/assets/images/background/draw-background.jpg";
         else if (path.includes("/about"))
-          image = "/assets/images/background/about-background.png";
+          image = "/assets/images/background/about-background.jpg";
         else if (path.includes("/result") && mbti && MBTI_PROFILE[mbti]) {
           image = MBTI_PROFILE[mbti].backgroundImage;
         }

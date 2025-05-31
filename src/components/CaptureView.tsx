@@ -33,7 +33,7 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
       >
         {/* 🔽 백그라운드 이미지 실제로 넣기 */}
         <img
-          src="/assets/images/result-background.png"
+          src="/assets/images/result-background.jpg"
           alt="background"
           style={{
             position: "absolute",

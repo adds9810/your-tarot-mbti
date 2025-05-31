@@ -114,7 +114,7 @@ export default function ResultPage() {
     const image = canvas.toDataURL("image/png");
     const link = document.createElement("a");
     link.href = image;
-    link.download = "tarot-result.png";
+    link.download = "tarot-result.jpg";
     link.click();
 
     if (typeof window !== "undefined" && window.gtag) {

@@ -24,7 +24,7 @@ export default function Document() {
         />
         <meta
           property="og:image"
-          content="https://your-tarot-mbti.vercel.app/assets/images/sns-share.png"
+          content="https://your-tarot-mbti.vercel.app/assets/images/sns-share.jpg"
         />
         {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics />}
       </Head>
