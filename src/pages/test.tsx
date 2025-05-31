@@ -100,6 +100,10 @@ export default function TestPage() {
           property="og:description"
           content="당신의 성향을 감성적인 6문항 테스트로 알아보세요."
         />
+        <meta
+          property="og:url"
+          content="https://your-tarot-mbti.vercel.app/test"
+        />
       </Head>
 
       <Layout>

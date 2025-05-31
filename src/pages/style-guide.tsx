@@ -28,6 +28,10 @@ export default function StyleGuide() {
           property="og:description"
           content="타로와 성향 기반 조언의 감성적 웹서비스 스타일 가이드"
         />
+        <meta
+          property="og:url"
+          content="https://your-tarot-mbti.vercel.app/style-guide"
+        />
       </Head>
       <main className="max-w-screen-md mx-auto space-y-16">
         {/* 1. 폰트 스타일 샘플 */}

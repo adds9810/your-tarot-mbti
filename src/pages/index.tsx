@@ -45,6 +45,7 @@ export default function Home() {
           property="og:description"
           content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다."
         />
+        <meta property="og:url" content="https://your-tarot-mbti.vercel.app/" />
       </Head>
 
       <Layout>

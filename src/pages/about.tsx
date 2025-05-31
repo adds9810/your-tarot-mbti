@@ -55,6 +55,10 @@ export default function AboutPage() {
           property="og:description"
           content="MBTI 성향에 따라 당신만의 맞춤형 타로 조언을 전해드립니다. 조용한 흐름의 시작, MBTI x Tarot."
         />
+        <meta
+          property="og:url"
+          content="https://your-tarot-mbti.vercel.app/about"
+        />
       </Head>
       <Layout>
         <div className="container mx-auto px-4 py-12">

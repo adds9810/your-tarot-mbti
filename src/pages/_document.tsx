@@ -25,6 +25,8 @@ export default function Document() {
           property="og:image"
           content="https://your-tarot-mbti.vercel.app/assets/images/sns-share.jpg"
         />
+        <meta property="og:url" content="https://your-tarot-mbti.vercel.app/" />
+        <meta property="og:site_name" content="조용한 흐름의 시작" />
       </Head>
       <body className="antialiased">
         <Main />

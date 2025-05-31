@@ -183,6 +183,10 @@ export default function DrawPage() {
           property="og:description"
           content="질문을 선택하고 타로카드를 직접 뽑아보세요. 감성적인 해석과 함께하는 리딩 경험."
         />
+        <meta
+          property="og:url"
+          content="https://your-tarot-mbti.vercel.app/draw"
+        />
       </Head>
       <Layout>
         <section
