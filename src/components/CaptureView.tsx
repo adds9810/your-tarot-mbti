@@ -103,7 +103,7 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
               marginTop: "24px",
             }}
           >
-            tarot.mysite.com <br />
+            https://your-tarot-mbti.vercel.app/ <br />
             created with ✨ Whispers of the Stars by 지혜
           </p>
         </div>
