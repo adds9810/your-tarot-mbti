@@ -11,7 +11,7 @@ const sentences = [
 
 const steps = [
   { icon: "📝", label: "1. MBTI 테스트", aria: "MBTI 테스트" },
-  { icon: "❓", label: "2. 질문 선택", aria: "질문 선택" },
+  { icon: "❓", label: "2. 질문 작성", aria: "질문 작성" },
   { icon: "🔮", label: "3. 타로 카드 뽑기", aria: "타로 카드 뽑기" },
   { icon: "💌", label: "4. 맞춤형 조언 받기", aria: "맞춤형 조언 받기" },
 ];
@@ -73,11 +73,11 @@ export default function Home() {
                 },
               },
             }}
-            className="flex flex-wrap gap-1 justify-center text-lg md:text-xl text-[#e6e1d6] mb-10 font-normal text-center"
+            className="flex flex-wrap gap-1 justify-center text-lg md:text-xl text-[#e6e1d6] mb-6 md:mb-10 font-normal text-center"
             aria-label={sentences.join(" ")}
           >
             {sentences.map((line, idx) => (
-              <motion.p key={idx} className="mb-2">
+              <motion.p key={idx}>
                 {line.split("").map((char, i) => (
                   <motion.span
                     key={i}
@@ -101,6 +101,9 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.2, duration: 0.8 }}
           >
+            <p className="text-sm text-[#bdb7a9] mb-2">
+              아래 버튼을 눌러 시작해보세요
+            </p>
             <Link
               href="/test"
               className="rounded-xl shadow-md bg-white/80 hover:bg-muted transition font-semibold px-8 py-3 text-lg text-gray-700 inline-block text-center"
@@ -111,7 +114,7 @@ export default function Home() {
             </Link>
           </motion.div>
           {/* 4단계 리스트 */}
-          <ol className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-14 text-[#e6e1d6]">
+          <ol className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10 md:mt-14 mb-2 md:mb-0 text-[#e6e1d6]">
             {steps.map((step, idx) => (
               <motion.li
                 key={step.label}
