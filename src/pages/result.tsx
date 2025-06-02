@@ -170,31 +170,31 @@ export default function ResultPage() {
               onImageLoad={() => setIsImageLoaded(true)}
             />
           </div>
+          {isImageLoaded && (
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* MBTI 프로필 섹션 */}
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                aria-labelledby="mbti-profile-title"
+                className="flex flex-col justify-between"
+              >
+                <div className="mb-8">
+                  <h1
+                    id="mbti-profile-title"
+                    className="text-3xl md:text-4xl font-serif font-bold text-[#f7f5f0] mb-4"
+                  >
+                    {result.mbti} {profile?.title ?? ""}
+                  </h1>
+                  <p className="text-[#e6e1d6] text-lg leading-relaxed">
+                    {profile?.description ?? ""}
+                  </p>
+                </div>
+              </motion.section>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* MBTI 프로필 섹션 */}
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              aria-labelledby="mbti-profile-title"
-              className="flex flex-col justify-between"
-            >
-              <div className="mb-8">
-                <h1
-                  id="mbti-profile-title"
-                  className="text-3xl md:text-4xl font-serif font-bold text-[#f7f5f0] mb-4"
-                >
-                  {result.mbti} {profile?.title ?? ""}
-                </h1>
-                <p className="text-[#e6e1d6] text-lg leading-relaxed">
-                  {profile?.description ?? ""}
-                </p>
-              </div>
-            </motion.section>
+              {/* 타로 결과 섹션 */}
 
-            {/* 타로 결과 섹션 */}
-            {isImageLoaded && (
               <motion.section
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -247,8 +247,8 @@ export default function ResultPage() {
                   </section>
                 </div>
               </motion.section>
-            )}
-          </div>
+            </div>
+          )}
           {/* 하단 플로팅 버튼 */}
           <div className="fixed bottom-20 right-4 z-50 flex flex-col items-end gap-3 sm:static sm:flex-row sm:justify-end sm:mt-4 sm:mb-0">
             <Button
