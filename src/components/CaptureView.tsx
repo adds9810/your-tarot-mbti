@@ -28,7 +28,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           position: "relative",
           color: "#f7f5f0",
           padding: "24px",
-          fontFamily: "serif",
           overflow: "hidden",
           backgroundColor: "#1a2320",
           backgroundSize: "cover",
@@ -46,7 +45,7 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
             left: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
+            objectFit: "fill",
             zIndex: 0,
           }}
         />
@@ -74,12 +73,10 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
             질문: {result.question}
           </p>
 
-          <Image
+          <img
             src={`/assets/images/${result.card.image.toLowerCase()}`}
             alt={result.card.name}
             onLoad={onImageLoad}
-            width={1536}
-            height={1024}
             style={{
               width: "90%",
               margin: "0 auto",
