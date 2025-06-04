@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { forwardRef } from "react";
 import { MBTI_PROFILE, MBTIType } from "@/constants/mbtiProfile";
+import Image from "next/image";
 
 interface TarotResult {
   card: { id: number; name: string; image: string };
@@ -12,7 +13,7 @@ interface TarotResult {
 
 interface Props {
   result: TarotResult;
-  onImageLoad?: () => void; // ✅ 이미지 로드 완료 콜백
+  onImageLoad?: () => void;
 }
 
 const CaptureView = forwardRef<HTMLDivElement, Props>(
@@ -30,16 +31,15 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           fontFamily: "serif",
           overflow: "hidden",
           backgroundColor: "#1a2320",
-          backgroundImage:
-            "url('/assets/images/background/result-background.jpg')", // ✅ 백그라운드 이미지 추가
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        {/* 🔽 백그라운드 이미지 실제로 넣기 */}
-        <img
+        <Image
           src="/assets/images/background/result-background.jpg"
           alt="background"
+          width={1536}
+          height={1024}
           style={{
             position: "absolute",
             top: 0,
@@ -50,7 +50,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
             zIndex: 0,
           }}
         />
-        {/* 🔼 모든 콘텐츠는 위에 올라가게 zIndex: 1 적용 */}
         <div style={{ position: "relative", zIndex: 1 }}>
           <h2
             style={{
@@ -75,10 +74,12 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
             질문: {result.question}
           </p>
 
-          <img
+          <Image
             src={`/assets/images/${result.card.image.toLowerCase()}`}
             alt={result.card.name}
             onLoad={onImageLoad}
+            width={1536}
+            height={1024}
             style={{
               width: "90%",
               margin: "0 auto",

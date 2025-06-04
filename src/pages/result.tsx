@@ -9,7 +9,7 @@ import { ArrowLeft, Share2, MessageCircleMore } from "lucide-react";
 import { MBTI_PROFILE, isMBTIType } from "@/constants/mbtiProfile";
 import CaptureView from "@/components/CaptureView";
 import html2canvas from "html2canvas";
-import FeedbackFormModal from "@/components/FeedbackFormModal"; // 💡 모달 import
+import FeedbackFormModal from "@/components/FeedbackFormModal";
 
 interface TarotResult {
   card: {
@@ -33,12 +33,12 @@ export default function ResultPage() {
   const [showModal, setShowModal] = useState(false);
   const [result, setResult] = useState<TarotResult | null>(null);
   const [profile, setProfile] = useState<MBTIProfile | null>(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(true);
   const captureRef = useRef<HTMLDivElement>(null);
   const hasCheckedSession = useRef(false);
 
   useEffect(() => {
-    if (hasCheckedSession.current) return; // 이미 실행한 경우 스킵
+    if (hasCheckedSession.current) return;
     hasCheckedSession.current = true;
     const savedResult = localStorage.getItem("tarot_result");
 

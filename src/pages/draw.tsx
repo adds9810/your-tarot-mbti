@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { tarotCards, TarotCard } from "@/constants/tarotCards";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import NextImage from "next/image";
 
 export default function DrawPage() {
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
@@ -387,9 +388,12 @@ export default function DrawPage() {
                         whileTap={{ scale: 0.97 }}
                         style={{ outline: "none" }}
                       >
-                        <img
+                        <NextImage
                           src="/assets/images/cards/back.jpg"
                           alt="타로 카드 뒷면"
+                          width={128}
+                          height={192}
+                          style={{ width: "100%", height: "auto" }}
                           className="w-full h-full object-contain select-none pointer-events-none"
                           draggable={false}
                         />
