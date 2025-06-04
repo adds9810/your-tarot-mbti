@@ -185,7 +185,7 @@ export default function App({ Component, pageProps }: AppProps) {
               className={`fixed top-0 left-0 w-full h-screen z-0 bg-no-repeat ${
                 !path.includes("/result")
                   ? "bg-cover bg-center"
-                  : "bg-cover bg-[15%] sm:-bg-[5%] lg:bg-center"
+                  : "bg-cover bg-[22%] sm:-bg-[5%] lg:bg-center"
               }`}
               style={{
                 backgroundImage: `url('${backgroundImage}')`,
