@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { forwardRef } from "react";
 import { MBTI_PROFILE, MBTIType } from "@/constants/mbtiProfile";
-import Image from "next/image";
 
 interface TarotResult {
   card: { id: number; name: string; image: string };
