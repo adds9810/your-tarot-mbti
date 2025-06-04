@@ -30,8 +30,6 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           padding: "24px",
           overflow: "hidden",
           backgroundColor: "#1a2320",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
         }}
       >
         <Image
@@ -42,11 +40,12 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           style={{
             position: "absolute",
             top: 0,
-            left: 0,
+            left: "50%",
             width: "100%",
             height: "100%",
-            objectFit: "fill",
+            objectFit: "inherit",
             zIndex: 0,
+            transform: "translateX(-50%)",
           }}
         />
         <div style={{ position: "relative", zIndex: 1 }}>
