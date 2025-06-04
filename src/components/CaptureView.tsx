@@ -100,10 +100,10 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
               top: 0,
               zIndex: "-1",
               width: "100%",
-              opacity: 0.1,
+              opacity: 0.6,
               height: "100%",
               borderRadius: "12px",
-              background: "#fffbe6",
+              background: "#1a2320",
             }}
           ></div>
         </div>
