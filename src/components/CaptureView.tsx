@@ -30,24 +30,13 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           padding: "24px",
           overflow: "hidden",
           backgroundColor: "#1a2320",
+          backgroundImage:
+            "url(/assets/images/background/result-background.jpg)",
+          backgroundSize: "100% 100%",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
         }}
       >
-        <Image
-          src="/assets/images/background/result-background.jpg"
-          alt="background"
-          width={1536}
-          height={1024}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: "50%",
-            width: "100%",
-            height: "100%",
-            objectFit: "inherit",
-            zIndex: 0,
-            transform: "translateX(-50%)",
-          }}
-        />
         <div style={{ position: "relative", zIndex: 1 }}>
           <h2
             style={{
