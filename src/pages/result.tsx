@@ -194,7 +194,6 @@ export default function ResultPage() {
               </motion.section>
 
               {/* 타로 결과 섹션 */}
-
               <motion.section
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}

@@ -27,7 +27,7 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           width: "400px",
           position: "relative",
           color: "#f7f5f0",
-          padding: "24px",
+          padding: "12px",
           overflow: "hidden",
           backgroundColor: "#1a2320",
           backgroundImage:
@@ -37,7 +37,7 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
           backgroundPosition: "center",
         }}
       >
-        <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ position: "relative", zIndex: 1, padding: "12px" }}>
           <h2
             style={{
               textAlign: "center",
@@ -92,6 +92,20 @@ const CaptureView = forwardRef<HTMLDivElement, Props>(
             https://your-tarot-mbti.vercel.app/ <br />
             created with ✨ Whispers of the Stars by 지혜
           </p>
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+              top: 0,
+              zIndex: "-1",
+              width: "100%",
+              opacity: 0.1,
+              height: "100%",
+              borderRadius: "12px",
+              background: "#fffbe6",
+            }}
+          ></div>
         </div>
       </div>
     );
