@@ -183,7 +183,7 @@ export default function AboutPage() {
               조용한 조언을 받아보고 싶다면?
             </h2>
             <Button
-              onClick={() => router.push("/about")}
+              onClick={() => router.push("/test")}
               className="bg-[#1a2320] hover:bg-[#2a3230] text-white px-8 py-6 rounded-full text-lg transition-all duration-300"
             >
               시작하러 가기
