@@ -7,7 +7,7 @@ export default function Document() {
         <link
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&display=swap"
           rel="stylesheet"
-        />{" "}
+        />
         <meta
           property="og:title"
           content="MBTI x Tarot | 성향 기반 타로 조언"

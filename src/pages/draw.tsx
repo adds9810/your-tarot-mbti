@@ -139,10 +139,22 @@ export default function DrawPage() {
       const res = await fetch("/api/gemini", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, card, mbti }), // ✅ 여기서도 동일 변수 사용
+        body: JSON.stringify({ question, card, mbti }),
       });
 
-      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(`서버 오류: ${res.status}`);
+      }
+
+      const text = await res.text();
+
+      if (!text) {
+        throw new Error(
+          "빈 응답이 왔습니다. Gemini 서버가 잠시 불안정한 것 같아요."
+        );
+      }
+
+      const data = JSON.parse(text);
 
       localStorage.setItem(
         "tarot_result",
@@ -159,7 +171,8 @@ export default function DrawPage() {
       router.push("/result");
     } catch (error) {
       console.error("Gemini 호출 실패:", error);
-      alert("결과를 불러오는 데 문제가 발생했어요.");
+      alert("결과를 불러오는 데 문제가 발생했어요. 잠시 후 다시 시도해주세요.");
+      setLoading(false);
     }
   };
 

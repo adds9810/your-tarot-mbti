@@ -1,4 +1,3 @@
-// AboutPage.tsx
 "use client";
 
 import Head from "next/head";
@@ -99,19 +98,27 @@ export default function AboutPage() {
               <div className="grid md:grid-cols-3 gap-6 mt-8">
                 <div className="bg-[#1a2320]/50 p-6 rounded-lg">
                   <h3 className="font-serif text-lg text-[#f7f5f0] mb-2">
-                    1. 질문 선택
+                    1. MBTI 테스트
+                  </h3>
+                  <p className="text-sm">
+                    성향을 파악하기 위한 MBTI 테스트를 실행합니다
+                  </p>
+                </div>
+                <div className="bg-[#1a2320]/50 p-6 rounded-lg">
+                  <h3 className="font-serif text-lg text-[#f7f5f0] mb-2">
+                    2. 질문 선택
                   </h3>
                   <p className="text-sm">고민하는 주제를 선택하세요</p>
                 </div>
                 <div className="bg-[#1a2320]/50 p-6 rounded-lg">
                   <h3 className="font-serif text-lg text-[#f7f5f0] mb-2">
-                    2. 카드 선택
+                    3. 카드 선택
                   </h3>
                   <p className="text-sm">마음에 드는 카드를 고르세요</p>
                 </div>
                 <div className="bg-[#1a2320]/50 p-6 rounded-lg">
                   <h3 className="font-serif text-lg text-[#f7f5f0] mb-2">
-                    3. 결과 확인
+                    4. 결과 확인
                   </h3>
                   <p className="text-sm">맞춤형 해석을 받아보세요</p>
                 </div>
