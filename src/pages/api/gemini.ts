@@ -5,9 +5,20 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // POST 메서드만 허용
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method Not Allowed" });
+  }
+
   const { question, card, mbti } = req.body;
 
-  const prompt = `
+  // 필수 파라미터 검증
+  if (!question || !card || !mbti) {
+    return res.status(400).json({ error: "필수 파라미터가 누락되었습니다." });
+  }
+
+  try {
+    const prompt = `
 당신은 감성적인 타로 리더이자 성향 분석가입니다.
 사용자의 MBTI는 ${mbti}이고, 질문은 "${question}"입니다.
 선택한 타로 카드는 '${card.name}'입니다.
@@ -22,10 +33,14 @@ MBTI 성향에 기반한 감성적 접근은 유지하되, 구체적인 행동 �
 1~2문단 분량으로, 말은 조용하지만 통찰력 있게 마무리해주세요.
 `;
 
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  const result = await model.generateContent(prompt);
-  const text = await result.response.text();
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent(prompt);
+    const text = await result.response.text();
 
-  res.status(200).json({ output: text });
+    res.status(200).json({ output: text });
+  } catch (error) {
+    console.error("Gemini API 오류:", error);
+    res.status(500).json({ error: "AI 응답 생성 중 오류가 발생했습니다." });
+  }
 }
